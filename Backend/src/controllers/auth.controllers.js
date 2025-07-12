@@ -1,9 +1,12 @@
-
-
 import {asyncHandler} from '../utils/async-handler.js';
-import {User} from '../models/user.model.js';
-import {registrationValidation, loginValidation} from '../validations/auth.validation.js';
-import {sendVerificationEmail} from '../utils/email.service.js';
+import {User} from '../models/user.models.js';
+import {registrationValidation, loginValidation} from '../validators/index.js';
+// import {sendVerificationEmail} from '../utils/email.service.js';
+import {
+  sendVerificationEmail,
+  sendPasswordResetEmail
+} from '../utils/mail.js'; // Or whatever the path to `mail.js` is
+
 
 const registerUser = asyncHandler(async (req, res) => {
   // Registration logic here

@@ -1,7 +1,7 @@
 // models/User.js
 import mongoose from "mongoose";
-import { UserRolesEnum } from "../utils/constants/userRolesEnum.js";
-import bcrypt from "bcrypt";
+import { UserRolesEnum } from "../utils/constants.js";
+import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import crypto from "crypto";
 
