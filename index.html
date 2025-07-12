@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skill Swap Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; transform: translateY(-20px); }
+            10%, 90% { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-out {
+            animation: fadeInOut 3s ease-in-out forwards;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white font-sans">
+
+    <!-- Navbar -->
+    <nav id="navbar" class="bg-gray-800 p-4 flex justify-between items-center shadow-lg sticky top-0 z-20">
+        <div class="text-2xl font-bold text-teal-400 cursor-pointer" id="nav-brand">
+            SkillSwap
+        </div>
+        <div id="nav-links" class="flex items-center space-x-4">
+            <!-- Links will be dynamically inserted here -->
+        </div>
+    </nav>
+
+    <!-- Notification Area -->
+    <div id="notification-area" class="fixed top-20 right-5 z-50"></div>
+
+    <main class="p-4 sm:p-6 lg:p-8">
+        <!-- Profile Screen -->
+        <div id="profile-screen" class="screen hidden">
+             <div class="max-w-2xl mx-auto mt-10 p-8 bg-gray-800 rounded-lg shadow-xl">
+                <h2 class="text-3xl font-bold text-center text-teal-400 mb-8">Your Profile</h2>
+                <form id="profile-form" class="space-y-6">
+                    <div><label class="block text-gray-400 mb-2">Name</label><input type="text" id="profile-name" class="w-full p-3 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:border-teal-500" required /></div>
+                    <div><label class="block text-gray-400 mb-2">Location (optional)</label><input type="text" id="profile-location" class="w-full p-3 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:border-teal-500" /></div>
+                    <div><label class="block text-gray-400 mb-2">Profile Photo URL (optional)</label><input type="text" id="profile-photo" class="w-full p-3 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:border-teal-500" /></div>
+                    <div><label class="block text-gray-400 mb-2">Skills You Offer (comma separated)</label><input type="text" id="profile-skills-offered" class="w-full p-3 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:border-teal-500" required /></div>
+                    <div><label class="block text-gray-400 mb-2">Skills You Want (comma separated)</label><input type="text" id="profile-skills-wanted" class="w-full p-3 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:border-teal-500" /></div>
+                    <div><label class="block text-gray-400 mb-2">Availability</label><input type="text" id="profile-availability" placeholder="e.g., Weekends, Evenings, Weekdays" class="w-full p-3 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:border-teal-500" /></div>
+                    <div class="flex items-center"><input type="checkbox" id="profile-is-public" class="h-5 w-5 text-teal-500 bg-gray-700 border-gray-600 rounded focus:ring-teal-500" checked /><label for="profile-is-public" class="ml-3 text-gray-300">Make profile public</label></div>
+                    <button type="submit" class="w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 px-4 rounded-md transition duration-300">Save Profile</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Dashboard Screen -->
+        <div id="dashboard-screen" class="screen">
+            <div id="recommendations-section" class="mb-12 hidden">
+                <h2 class="text-2xl font-bold text-teal-400 mb-4">Recommended For You</h2>
+                <div id="recommendations-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+            </div>
+
+            <h2 class="text-2xl font-bold text-teal-400 mb-4">Browse All Users</h2>
+            <div class="mb-8 flex flex-col md:flex-row gap-4 justify-center items-center">
+                <input type="text" id="search-input" placeholder="Search by name or skill..." class="w-full md:w-1/2 lg:w-1/3 p-3 bg-gray-800 rounded-full border border-gray-700 focus:outline-none focus:border-teal-500"/>
+                <select id="availability-filter" class="w-full md:w-auto p-3 bg-gray-800 rounded-full border border-gray-700 focus:outline-none focus:border-teal-500 text-white">
+                    <option value="">All Availabilities</option>
+                    <option value="Weekends">Weekends</option>
+                    <option value="Evenings">Evenings</option>
+                    <option value="Weekdays">Weekdays</option>
+                </select>
+            </div>
+            <div id="users-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+            <div id="pagination-container" class="mt-12"></div>
+        </div>
+
+        <!-- Swap Requests Screen -->
+        <div id="requests-screen" class="screen hidden">
+            <div class="max-w-4xl mx-auto">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-3xl font-bold text-teal-400">Swap Requests</h2>
+                    <select id="request-status-filter" class="p-2 bg-gray-800 rounded-md border border-gray-700 focus:outline-none focus:border-teal-500 text-white">
+                        <option value="all">All</option>
+                        <option value="pending">Pending</option>
+                        <option value="accepted">Accepted</option>
+                        <option value="rejected">Rejected</option>
+                        <option value="completed">Completed</option>
+                    </select>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4 border-b-2 border-gray-700 pb-2">Received</h3>
+                        <div id="received-requests-container"></div>
+                    </div>
+                    <div>
+                        <h3 class="text-2xl font-semibold mb-4 border-b-2 border-gray-700 pb-2">Sent</h3>
+                        <div id="sent-requests-container"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <!-- Modals Container -->
+    <div id="modals-container"></div>
+
+
+    <!-- App Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Seed Data ---
+            const seedUsers = [
+                { id: 'seed_user_1', name: 'Alice Johnson', location: 'San Francisco, CA', photoURL: 'https://placehold.co/80x80/3498db/ffffff?text=A', skillsOffered: ['Graphic Design', 'Photoshop', 'Illustration'], skillsWanted: ['Web Development', 'React', 'Node.js'], availability: 'Evenings', isPublic: true, rating: 4.5, ratingCount: 10 },
+                { id: 'seed_user_2', name: 'Bob Williams', location: 'New York, NY', photoURL: 'https://placehold.co/80x80/e74c3c/ffffff?text=B', skillsOffered: ['Content Writing', 'SEO', 'Blogging'], skillsWanted: ['Graphic Design', 'Video Editing'], availability: 'Weekends', isPublic: true, rating: 4.8, ratingCount: 15 },
+                { id: 'seed_user_3', name: 'Charlie Brown', location: 'Chicago, IL', photoURL: 'https://placehold.co/80x80/2ecc71/ffffff?text=C', skillsOffered: ['React', 'Node.js', 'Firebase'], skillsWanted: ['Marketing', 'Social Media'], availability: 'Weekdays', isPublic: true, rating: 4.2, ratingCount: 8 },
+                ...Array.from({ length: 70 }, (_, i) => {
+                    const firstNames = ["Liam", "Olivia", "Noah", "Emma", "Oliver", "Ava", "Elijah", "Charlotte", "William", "Sophia", "James", "Amelia", "Benjamin", "Isabella", "Lucas", "Mia", "Henry", "Evelyn", "Alexander", "Harper"];
+                    const lastNames = ["Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez"];
+                    const locations = ["New York, NY", "Los Angeles, CA", "Chicago, IL", "Houston, TX", "Phoenix, AZ", "Philadelphia, PA", "San Antonio, TX", "San Diego, CA", "Dallas, TX", "San Jose, CA"];
+                    const skills = ["JavaScript", "Python", "Java", "C++", "C#", "HTML", "CSS", "React", "Angular", "Vue.js", "Node.js", "Express.js", "Django", "Flask", "Public Speaking", "Content Writing", "SEO", "Marketing", "Sales", "Project Management"];
+                    const availabilities = ["Weekends", "Evenings", "Weekdays", "Always"];
+                    const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+                    return {
+                        id: `seed_user_${i + 4}`,
+                        name: `${firstName} ${lastNames[Math.floor(Math.random() * lastNames.length)]}`,
+                        location: locations[Math.floor(Math.random() * locations.length)],
+                        photoURL: `https://placehold.co/80x80/${Math.floor(Math.random()*16777215).toString(16)}/ffffff?text=${firstName.charAt(0)}`,
+                        skillsOffered: [...new Set([...Array(Math.floor(Math.random() * 3) + 2)].map(() => skills[Math.floor(Math.random() * skills.length)]))],
+                        skillsWanted: [...new Set([...Array(Math.floor(Math.random() * 3) + 2)].map(() => skills[Math.floor(Math.random() * skills.length)]))],
+                        availability: availabilities[Math.floor(Math.random() * availabilities.length)],
+                        isPublic: true,
+                        rating: (Math.random() * 4 + 1).toFixed(1),
+                        ratingCount: Math.floor(Math.random() * 50) + 1,
+                    }
+                })
+            ];
+
+            // --- App State ---
+            let currentUser = { uid: "test_user_id" };
+            let currentUserProfile = { id: 'test_user_id', name: 'Test User', location: 'Your Computer', photoURL: 'https://placehold.co/80x80/9b59b6/ffffff?text=T', skillsOffered: ['Testing', 'Debugging'], skillsWanted: ['React', 'Graphic Design'], availability: 'Always', isPublic: true, rating: 5, ratingCount: 1 };
+            let allUsers = seedUsers;
+            let allRequests = [
+                { id: "seed_user_1_test_user_id", requesterId: "seed_user_1", requesterName: "Alice Johnson", requesterPhoto: "https://placehold.co/80x80/3498db/ffffff?text=A", targetId: "test_user_id", targetName: "Test User", targetPhoto: "https://placehold.co/80x80/9b59b6/ffffff?text=T", offeredSkill: "Graphic Design", wantedSkill: "Testing", message: "Hey! I'd love to swap skills with you.", status: "pending", createdAt: new Date() }
+            ];
+            let currentPage = 1;
+            const usersPerPage = 6;
+
+            // --- DOM Elements ---
+            const screens = document.querySelectorAll('.screen');
+            const navLinks = document.getElementById('nav-links');
+            const navBrand = document.getElementById('nav-brand');
+            const profileForm = document.getElementById('profile-form');
+            const usersContainer = document.getElementById('users-container');
+            const searchInput = document.getElementById('search-input');
+            const availabilityFilter = document.getElementById('availability-filter');
+            const paginationContainer = document.getElementById('pagination-container');
+            const recommendationsSection = document.getElementById('recommendations-section');
+            const recommendationsContainer = document.getElementById('recommendations-container');
+            const receivedRequestsContainer = document.getElementById('received-requests-container');
+            const sentRequestsContainer = document.getElementById('sent-requests-container');
+            const requestStatusFilter = document.getElementById('request-status-filter');
+
+            // --- Navigation & UI Updates ---
+            const navigateTo = (screenName) => {
+                screens.forEach(s => s.classList.add('hidden'));
+                document.getElementById(`${screenName}-screen`).classList.remove('hidden');
+            };
+
+            const updateNav = () => {
+                navLinks.innerHTML = `
+                    <button data-screen="dashboard" class="nav-btn px-4 py-2 rounded-md text-white hover:bg-gray-700 transition">Dashboard</button>
+                    <button data-screen="requests" class="nav-btn px-4 py-2 rounded-md text-white hover:bg-gray-700 transition">My Swaps</button>
+                    <button data-screen="profile" class="nav-btn px-4 py-2 rounded-md text-white hover:bg-gray-700 transition">Profile</button>
+                `;
+            };
+
+            const showNotification = (message, type = 'success') => {
+                const bgColor = type === 'success' ? 'bg-green-500' : 'bg-red-500';
+                const notification = document.createElement('div');
+                notification.className = `fixed top-20 right-5 ${bgColor} text-white px-6 py-3 rounded-lg shadow-lg animate-fade-in-out z-50`;
+                notification.textContent = message;
+                document.getElementById('notification-area').appendChild(notification);
+                setTimeout(() => notification.remove(), 3000);
+            };
+            
+            // --- Rendering Functions ---
+            const renderDashboard = () => {
+                if (!currentUserProfile) return;
+                const search = searchInput.value.toLowerCase();
+                const availability = availabilityFilter.value.toLowerCase();
+
+                const recommended = currentUserProfile.skillsWanted ? allUsers.filter(u => 
+                    u.skillsOffered && u.skillsOffered.some(offered => currentUserProfile.skillsWanted.map(s => s.toLowerCase()).includes(offered.toLowerCase()))
+                ) : [];
+
+                const nonRecommended = allUsers.filter(u => !recommended.find(rec => rec.id === u.id));
+
+                const filtered = nonRecommended.filter(user => {
+                    const matchesSearch = (user.name?.toLowerCase().includes(search)) ||
+                                        (user.skillsOffered?.some(skill => skill.toLowerCase().includes(search)));
+                    const matchesAvailability = availability ? (user.availability?.toLowerCase().includes(availability)) : true;
+                    return matchesSearch && matchesAvailability;
+                });
+
+                if(recommended.length > 0) {
+                    recommendationsSection.classList.remove('hidden');
+                    recommendationsContainer.innerHTML = recommended.map(createUserCard).join('');
+                } else {
+                    recommendationsSection.classList.add('hidden');
+                }
+
+                const indexOfLastUser = currentPage * usersPerPage;
+                const indexOfFirstUser = indexOfLastUser - usersPerPage;
+                const currentUsers = filtered.slice(indexOfFirstUser, indexOfLastUser);
+                
+                usersContainer.innerHTML = currentUsers.map(createUserCard).join('');
+                renderPagination(filtered.length);
+            };
+
+            const createUserCard = (user) => {
+                const rating = user.ratingCount > 0 ? (user.rating / user.ratingCount).toFixed(1) : 'No ratings';
+                return `
+                    <div class="bg-gray-800 rounded-lg shadow-lg p-6 flex flex-col h-full transform hover:scale-105 transition-transform duration-300">
+                        <div class="flex items-center mb-4">
+                            <img src="${user.photoURL || `https://placehold.co/80x80/1a202c/718096?text=${user.name.charAt(0)}`}" alt="${user.name}" class="w-20 h-20 rounded-full mr-4 border-2 border-teal-400" />
+                            <div>
+                                <h3 class="text-xl font-bold">${user.name}</h3>
+                                <p class="text-gray-400">${user.location || ''}</p>
+                                <p class="text-yellow-400">⭐ ${rating} (${user.ratingCount || 0})</p>
+                            </div>
+                        </div>
+                        <div class="flex-grow">
+                            <h4 class="font-semibold text-teal-400 mt-4 mb-2">Offers:</h4>
+                            <div class="flex flex-wrap gap-2">${user.skillsOffered?.map(skill => `<span class="bg-gray-700 text-teal-300 px-3 py-1 rounded-full text-sm">${skill}</span>`).join('')}</div>
+                            <h4 class="font-semibold text-teal-400 mt-4 mb-2">Wants:</h4>
+                            <div class="flex flex-wrap gap-2">${user.skillsWanted?.map(skill => `<span class="bg-gray-700 text-gray-300 px-3 py-1 rounded-full text-sm">${skill}</span>`).join('')}</div>
+                            ${user.availability ? `<h4 class="font-semibold text-teal-400 mt-4 mb-2">Availability:</h4><p class="text-gray-400">${user.availability}</p>` : ''}
+                        </div>
+                        <button data-user-id="${user.id}" class="request-swap-btn mt-6 w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded-md transition">Request Swap</button>
+                    </div>
+                `;
+            };
+
+            const renderPagination = (totalUsers) => {
+                const totalPages = Math.ceil(totalUsers / usersPerPage);
+                if (totalPages <= 1) {
+                    paginationContainer.innerHTML = '';
+                    return;
+                }
+                let pageNumbers = '';
+                for (let i = 1; i <= totalPages; i++) {
+                    pageNumbers += `<li><button data-page="${i}" class="page-btn px-4 py-2 rounded-md transition ${currentPage === i ? 'bg-teal-500 text-white' : 'bg-gray-800 hover:bg-gray-700'}">${i}</button></li>`;
+                }
+
+                paginationContainer.innerHTML = `
+                    <ul class="flex justify-center items-center space-x-2">
+                        <li><button id="prev-page" class="px-4 py-2 rounded-md transition ${currentPage === 1 ? 'bg-gray-700 text-gray-500 cursor-not-allowed' : 'bg-gray-800 hover:bg-gray-700'}" ${currentPage === 1 ? 'disabled' : ''}>&lt;</button></li>
+                        ${pageNumbers}
+                        <li><button id="next-page" class="px-4 py-2 rounded-md transition ${currentPage === totalPages ? 'bg-gray-700 text-gray-500 cursor-not-allowed' : 'bg-gray-800 hover:bg-gray-700'}" ${currentPage === totalPages ? 'disabled' : ''}>&gt;</button></li>
+                    </ul>
+                `;
+            };
+
+            const renderSwapRequests = () => {
+                const statusFilter = requestStatusFilter.value;
+                const filtered = allRequests.filter(r => statusFilter === 'all' || r.status === statusFilter);
+                
+                const received = filtered.filter(r => r.targetId === currentUser.uid);
+                const sent = filtered.filter(r => r.requesterId === currentUser.uid);
+
+                receivedRequestsContainer.innerHTML = received.length > 0 ? received.map(r => createRequestCard(r, 'received')).join('') : `<p class="text-gray-400">No requests received.</p>`;
+                sentRequestsContainer.innerHTML = sent.length > 0 ? sent.map(r => createRequestCard(r, 'sent')).join('') : `<p class="text-gray-400">No requests sent.</p>`;
+            };
+
+            const createRequestCard = (request, type) => {
+                const displayName = type === 'received' ? request.requesterName : request.targetName;
+                const displayPhoto = type === 'received' ? request.requesterPhoto : request.targetPhoto;
+                const statusColors = {
+                    pending: 'bg-yellow-500/20 text-yellow-300',
+                    accepted: 'bg-green-500/20 text-green-300',
+                    rejected: 'bg-red-500/20 text-red-300',
+                    completed: 'bg-blue-500/20 text-blue-300'
+                };
+
+                let buttons = '';
+                if (type === 'received' && request.status === 'pending') {
+                    buttons = `<button data-id="${request.id}" class="accept-btn bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm">Accept</button>
+                                <button data-id="${request.id}" class="reject-btn bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm">Reject</button>`;
+                } else if (type === 'received' && request.status === 'accepted') {
+                    buttons = `<button data-id="${request.id}" class="complete-btn bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md text-sm">Complete Swap</button>`;
+                } else if (type === 'sent' && request.status === 'pending') {
+                    buttons = `<button data-id="${request.id}" class="delete-btn bg-gray-600 hover:bg-gray-500 text-white px-3 py-1 rounded-md text-sm">Delete</button>`;
+                }
+
+                return `
+                    <div class="bg-gray-800 p-4 rounded-lg mb-4 shadow-md space-y-3">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <img src="${displayPhoto || `https://placehold.co/40x40/1a202c/718096?text=${displayName.charAt(0)}`}" alt="${displayName}" class="w-10 h-10 rounded-full mr-3" />
+                                <p class="font-semibold">${displayName}</p>
+                            </div>
+                            <span class="px-3 py-1 text-sm rounded-full ${statusColors[request.status]}">${request.status}</span>
+                        </div>
+                        <div>
+                            <p class="text-sm text-gray-400">You Offer: <span class="font-semibold text-teal-300">${type === 'received' ? request.wantedSkill : request.offeredSkill}</span></p>
+                            <p class="text-sm text-gray-400">You Get: <span class="font-semibold text-teal-300">${type === 'received' ? request.offeredSkill : request.wantedSkill}</span></p>
+                        </div>
+                        ${request.message ? `<p class="text-sm bg-gray-700 p-2 rounded-md">"${request.message}"</p>` : ''}
+                        <div class="mt-4 flex justify-end space-x-2">${buttons}</div>
+                    </div>
+                `;
+            };
+
+            const renderProfileForm = () => {
+                if (currentUserProfile) {
+                    document.getElementById('profile-name').value = currentUserProfile.name || '';
+                    document.getElementById('profile-location').value = currentUserProfile.location || '';
+                    document.getElementById('profile-photo').value = currentUserProfile.photoURL || '';
+                    document.getElementById('profile-skills-offered').value = currentUserProfile.skillsOffered?.join(', ') || '';
+                    document.getElementById('profile-skills-wanted').value = currentUserProfile.skillsWanted?.join(', ') || '';
+                    document.getElementById('profile-availability').value = currentUserProfile.availability || '';
+                    document.getElementById('profile-is-public').checked = currentUserProfile.isPublic !== undefined ? currentUserProfile.isPublic : true;
+                }
+            };
+
+            // --- Modals ---
+            const openRequestModal = (targetUser) => {
+                const offeredOptions = currentUserProfile.skillsOffered?.map(s => `<option value="${s}">${s}</option>`).join('');
+                const wantedOptions = targetUser.skillsOffered?.map(s => `<option value="${s}">${s}</option>`).join('');
+
+                const modalHTML = `
+                    <div id="request-swap-modal" class="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
+                        <div class="bg-gray-800 rounded-lg shadow-xl p-8 w-full max-w-lg relative">
+                            <button id="close-request-modal" class="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl">&times;</button>
+                            <h2 class="text-2xl font-bold text-teal-400 mb-4">New Swap Request</h2>
+                            <p class="mb-6 text-gray-300">Propose a swap with <span class="font-bold">${targetUser.name}</span>.</p>
+                            <form id="request-swap-form" data-target-id="${targetUser.id}" class="space-y-6">
+                                <div>
+                                    <label class="block text-gray-400 mb-2">Choose one of your offered skills:</label>
+                                    <select id="request-offered-skill" class="w-full p-3 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:border-teal-500" required>${offeredOptions}</select>
+                                </div>
+                                <div>
+                                    <label class="block text-gray-400 mb-2">Choose one of their offered skills:</label>
+                                    <select id="request-wanted-skill" class="w-full p-3 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:border-teal-500" required>${wantedOptions}</select>
+                                </div>
+                                <div>
+                                    <label class="block text-gray-400 mb-2">Message (optional):</label>
+                                    <textarea id="request-message" rows="4" class="w-full p-3 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:border-teal-500"></textarea>
+                                </div>
+                                <div class="flex justify-end space-x-4">
+                                    <button type="button" id="cancel-request-btn" class="px-6 py-2 rounded-md text-white bg-gray-600 hover:bg-gray-500 transition">Cancel</button>
+                                    <button type="submit" class="px-6 py-2 rounded-md text-white bg-teal-500 hover:bg-teal-600 transition">Submit Request</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('modals-container').innerHTML = modalHTML;
+            };
+
+            const openRatingModal = (request) => {
+                const userToRateName = request.requesterId === currentUser.uid ? request.targetName : request.requesterName;
+                const modalHTML = `
+                    <div id="rating-modal" class="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
+                        <div class="bg-gray-800 rounded-lg shadow-xl p-8 w-full max-w-md">
+                            <h3 class="text-2xl font-bold text-teal-400 mb-4">Complete Swap & Rate</h3>
+                            <p class="text-gray-300 mb-6">How was your experience with ${userToRateName}?</p>
+                            <form id="rating-form" data-request-id="${request.id}">
+                                <div class="flex justify-center items-center space-x-2 mb-8" id="rating-stars">
+                                    ${[1, 2, 3, 4, 5].map(star => `<svg data-rating="${star}" class="rating-star w-10 h-10 cursor-pointer ${5 >= star ? 'text-yellow-400' : 'text-gray-600'}" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>`).join('')}
+                                </div>
+                                <input type="hidden" id="rating-value" value="5" />
+                                <div class="flex justify-end space-x-4">
+                                    <button type="button" id="cancel-rating-btn" class="px-6 py-2 rounded-md text-white bg-gray-600 hover:bg-gray-500 transition">Cancel</button>
+                                    <button type="submit" class="px-6 py-2 rounded-md text-white bg-teal-500 hover:bg-teal-600 transition">Submit</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('modals-container').innerHTML = modalHTML;
+            };
+
+            const closeModal = () => {
+                document.getElementById('modals-container').innerHTML = '';
+            };
+
+            // --- Event Handlers & Logic ---
+            const handleProfileSubmit = (e) => {
+                e.preventDefault();
+                showNotification("Profile saved (demo only)!");
+                navigateTo('dashboard');
+            };
+
+            const handleRequestSwapSubmit = (e) => {
+                e.preventDefault();
+                const targetId = e.target.dataset.targetId;
+                const targetUser = allUsers.find(u => u.id === targetId);
+                const newRequest = {
+                    id: [currentUser.uid, targetUser.id].sort().join('_'),
+                    requesterId: currentUser.uid,
+                    requesterName: currentUserProfile.name,
+                    requesterPhoto: currentUserProfile.photoURL,
+                    targetId: targetUser.id,
+                    targetName: targetUser.name,
+                    targetPhoto: targetUser.photoURL,
+                    offeredSkill: document.getElementById('request-offered-skill').value,
+                    wantedSkill: document.getElementById('request-wanted-skill').value,
+                    message: document.getElementById('request-message').value,
+                    status: 'pending',
+                    createdAt: new Date(),
+                };
+                
+                // Add to local state and re-render
+                allRequests.unshift(newRequest);
+                renderSwapRequests();
+
+                showNotification("Swap request sent!");
+                closeModal();
+            };
+            
+            const handleRatingSubmit = (e) => {
+                e.preventDefault();
+                showNotification("Rating submitted (demo only)!");
+                closeModal();
+            };
+
+            const handleRequestAction = (requestId, status) => {
+                const request = allRequests.find(r => r.id === requestId);
+                if (request) {
+                    request.status = status;
+                    renderSwapRequests();
+                }
+                showNotification(`Request ${status}.`);
+            };
+            
+            const handleDeleteRequest = (requestId) => {
+                allRequests = allRequests.filter(r => r.id !== requestId);
+                renderSwapRequests();
+                showNotification("Request deleted.");
+            };
+            
+            // --- Event Listeners Setup ---
+            profileForm.addEventListener('submit', handleProfileSubmit);
+            navBrand.addEventListener('click', () => navigateTo('dashboard'));
+            navLinks.addEventListener('click', (e) => {
+                if (e.target.matches('.nav-btn')) {
+                    navigateTo(e.target.dataset.screen);
+                }
+            });
+
+            searchInput.addEventListener('input', renderDashboard);
+            availabilityFilter.addEventListener('change', renderDashboard);
+            requestStatusFilter.addEventListener('change', renderSwapRequests);
+
+            paginationContainer.addEventListener('click', e => {
+                if (e.target.matches('.page-btn')) {
+                    currentPage = parseInt(e.target.dataset.page);
+                    renderDashboard();
+                } else if (e.target.matches('#prev-page')) {
+                    if (currentPage > 1) {
+                        currentPage--;
+                        renderDashboard();
+                    }
+                } else if (e.target.matches('#next-page')) {
+                    const totalPages = Math.ceil(allUsers.filter(u => u.name.toLowerCase().includes(searchInput.value.toLowerCase())).length / usersPerPage);
+                    if (currentPage < totalPages) {
+                        currentPage++;
+                        renderDashboard();
+                    }
+                }
+            });
+
+            document.body.addEventListener('click', e => {
+                if (e.target.matches('.request-swap-btn')) {
+                    const userId = e.target.dataset.userId;
+                    const userToRequest = allUsers.find(u => u.id === userId);
+                    if (userToRequest) openRequestModal(userToRequest);
+                }
+                if (e.target.matches('#close-request-modal') || e.target.matches('#cancel-request-btn')) {
+                    closeModal();
+                }
+                if (e.target.matches('#close-rating-modal') || e.target.matches('#cancel-rating-btn')) {
+                    closeModal();
+                }
+                if (e.target.closest('#request-swap-form')) {
+                    if(e.target.closest('form').id === 'request-swap-form') e.target.closest('form').addEventListener('submit', handleRequestSwapSubmit);
+                }
+                if (e.target.closest('#rating-form')) {
+                    if(e.target.closest('form').id === 'rating-form') e.target.closest('form').addEventListener('submit', handleRatingSubmit);
+                }
+                if(e.target.matches('.rating-star')){
+                    const rating = parseInt(e.target.dataset.rating);
+                    document.getElementById('rating-value').value = rating;
+                    document.querySelectorAll('.rating-star').forEach(star => {
+                        star.classList.toggle('text-yellow-400', parseInt(star.dataset.rating) <= rating);
+                        star.classList.toggle('text-gray-600', parseInt(star.dataset.rating) > rating);
+                    });
+                }
+                if(e.target.matches('.accept-btn')) handleRequestAction(e.target.dataset.id, 'accepted');
+                if(e.target.matches('.reject-btn')) handleRequestAction(e.target.dataset.id, 'rejected');
+                if(e.target.matches('.delete-btn')) handleDeleteRequest(e.target.dataset.id);
+                if(e.target.matches('.complete-btn')) {
+                    const request = allRequests.find(r => r.id === e.target.dataset.id);
+                    if(request) openRatingModal(request);
+                }
+            });
+
+            // --- Initial Load ---
+            function initializeAppLogic() {
+                updateNav();
+                renderDashboard();
+                renderSwapRequests();
+                renderProfileForm();
+            }
+
+            initializeAppLogic();
+        });
+    </script>
+
+</body>
+</html>
