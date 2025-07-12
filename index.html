@@ -16,13 +16,94 @@
         .hidden {
             display: none;
         }
+        #profile-photo-preview {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid #4FD1C5;
+            margin: 0 auto;
+        }
+        #profile-photo-upload {
+            display: none;
+        }
+        .photo-upload-btn {
+            display: inline-block;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .user-card {
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .user-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+        }
+        .skill-badge {
+            transition: all 0.2s ease;
+        }
+        .skill-badge:hover {
+            transform: scale(1.05);
+        }
+        .rating-star {
+            transition: all 0.2s ease;
+        }
+        .rating-star:hover {
+            transform: scale(1.2);
+        }
+        .dropdown {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #2d3748;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 0.375rem;
+            width: 100%;
+        }
+        .dropdown-content a {
+            color: #e2e8f0;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+        .dropdown-content a:hover {
+            background-color: #4a5568;
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        .dropdown-btn {
+            width: 100%;
+            text-align: left;
+            padding: 0.75rem;
+            background-color: #4a5568;
+            border: 1px solid #4a5568;
+            border-radius: 0.375rem;
+            color: white;
+            cursor: pointer;
+        }
+        .dropdown-btn:after {
+            content: "▼";
+            float: right;
+            margin-left: 5px;
+        }
     </style>
 </head>
-<body class="bg-gray-900 text-white font-sans">
+<body class="bg-gray-900 text-white font-sans min-h-screen">
 
     <!-- Navbar -->
     <nav id="navbar" class="bg-gray-800 p-4 flex justify-between items-center shadow-lg sticky top-0 z-20">
-        <div class="text-2xl font-bold text-teal-400 cursor-pointer" id="nav-brand">
+        <div class="text-2xl font-bold text-teal-400 cursor-pointer flex items-center" id="nav-brand">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
             SkillSwap
         </div>
         <div id="nav-links" class="flex items-center space-x-4">
@@ -34,31 +115,181 @@
     <div id="notification-area" class="fixed top-20 right-5 z-50"></div>
 
     <main class="p-4 sm:p-6 lg:p-8">
+        <!-- Auth Screen -->
+        <div id="auth-screen" class="screen">
+            <div class="max-w-md mx-auto mt-10 p-8 bg-gray-800 rounded-lg shadow-xl">
+                <div class="text-center mb-6">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4" />
+                    </svg>
+                </div>
+                <h2 id="auth-title" class="text-3xl font-bold text-center text-teal-400 mb-8">Login</h2>
+                <p id="auth-error" class="bg-red-500/20 text-red-400 p-3 rounded-md mb-4 hidden"></p>
+                <form id="auth-form">
+                    <div class="mb-4">
+                        <label class="block text-gray-400 mb-2" for="email">Email</label>
+                        <input type="email" id="email" class="w-full p-3 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:border-teal-500" required />
+                    </div>
+                    <div class="mb-6">
+                        <label class="block text-gray-400 mb-2" for="password">Password</label>
+                        <input type="password" id="password" class="w-full p-3 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:border-teal-500" required />
+                    </div>
+                    <button type="submit" id="auth-button" class="w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 px-4 rounded-md transition duration-300 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                        </svg>
+                        Login
+                    </button>
+                </form>
+                <p class="text-center mt-6">
+                    <span id="auth-toggle-text">Don't have an account?</span>
+                    <button id="auth-toggle-button" class="text-teal-400 hover:underline ml-2">Sign Up</button>
+                </p>
+            </div>
+        </div>
+
         <!-- Profile Screen -->
         <div id="profile-screen" class="screen hidden">
-             <div class="max-w-2xl mx-auto mt-10 p-8 bg-gray-800 rounded-lg shadow-xl">
+            <div class="max-w-2xl mx-auto mt-10 p-8 bg-gray-800 rounded-lg shadow-xl">
                 <h2 class="text-3xl font-bold text-center text-teal-400 mb-8">Your Profile</h2>
                 <form id="profile-form" class="space-y-6">
-                    <div><label class="block text-gray-400 mb-2">Name</label><input type="text" id="profile-name" class="w-full p-3 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:border-teal-500" required /></div>
-                    <div><label class="block text-gray-400 mb-2">Location (optional)</label><input type="text" id="profile-location" class="w-full p-3 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:border-teal-500" /></div>
-                    <div><label class="block text-gray-400 mb-2">Profile Photo URL (optional)</label><input type="text" id="profile-photo" class="w-full p-3 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:border-teal-500" /></div>
-                    <div><label class="block text-gray-400 mb-2">Skills You Offer (comma separated)</label><input type="text" id="profile-skills-offered" class="w-full p-3 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:border-teal-500" required /></div>
-                    <div><label class="block text-gray-400 mb-2">Skills You Want (comma separated)</label><input type="text" id="profile-skills-wanted" class="w-full p-3 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:border-teal-500" /></div>
-                    <div><label class="block text-gray-400 mb-2">Availability</label><input type="text" id="profile-availability" placeholder="e.g., Weekends, Evenings, Weekdays" class="w-full p-3 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:border-teal-500" /></div>
-                    <div class="flex items-center"><input type="checkbox" id="profile-is-public" class="h-5 w-5 text-teal-500 bg-gray-700 border-gray-600 rounded focus:ring-teal-500" checked /><label for="profile-is-public" class="ml-3 text-gray-300">Make profile public</label></div>
-                    <button type="submit" class="w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 px-4 rounded-md transition duration-300">Save Profile</button>
+                    <div class="text-center">
+                        <img id="profile-photo-preview" src="https://placehold.co/120x120/1a202c/718096?text=U" alt="Profile Preview" class="mb-4">
+                        <input type="file" id="profile-photo-upload" accept="image/*">
+                        <label for="profile-photo-upload" class="photo-upload-btn bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded-md transition cursor-pointer flex items-center justify-center mx-auto">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clip-rule="evenodd" />
+                            </svg>
+                            Upload Photo
+                        </label>
+                        <input type="hidden" id="profile-photo-url">
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 mb-2">Name</label>
+                        <input type="text" id="profile-name" class="w-full p-3 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:border-teal-500" required />
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 mb-2">Location (optional)</label>
+                        <div class="dropdown">
+                            <button class="dropdown-btn" type="button" id="location-dropdown">Select Location</button>
+                            <div class="dropdown-content" id="location-options">
+                                <a href="#" data-value="New York, NY">New York, NY</a>
+                                <a href="#" data-value="San Francisco, CA">San Francisco, CA</a>
+                                <a href="#" data-value="Chicago, IL">Chicago, IL</a>
+                                <a href="#" data-value="Austin, TX">Austin, TX</a>
+                                <a href="#" data-value="Seattle, WA">Seattle, WA</a>
+                                <a href="#" data-value="Boston, MA">Boston, MA</a>
+                                <a href="#" data-value="Denver, CO">Denver, CO</a>
+                                <a href="#" data-value="Portland, OR">Portland, OR</a>
+                                <a href="#" data-value="Miami, FL">Miami, FL</a>
+                                <a href="#" data-value="Atlanta, GA">Atlanta, GA</a>
+                            </div>
+                            <input type="hidden" id="profile-location">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 mb-2">Skills You Offer (select from list or add custom)</label>
+                        <div class="dropdown">
+                            <button class="dropdown-btn" type="button" id="skills-offered-dropdown">Select Skills</button>
+                            <div class="dropdown-content" id="skills-offered-options">
+                                <a href="#" data-value="Graphic Design">Graphic Design</a>
+                                <a href="#" data-value="Photoshop">Photoshop</a>
+                                <a href="#" data-value="Illustration">Illustration</a>
+                                <a href="#" data-value="Content Writing">Content Writing</a>
+                                <a href="#" data-value="SEO">SEO</a>
+                                <a href="#" data-value="Blogging">Blogging</a>
+                                <a href="#" data-value="React">React</a>
+                                <a href="#" data-value="Node.js">Node.js</a>
+                                <a href="#" data-value="Firebase">Firebase</a>
+                                <a href="#" data-value="Marketing">Marketing</a>
+                                <a href="#" data-value="Social Media">Social Media</a>
+                                <a href="#" data-value="UI/UX Design">UI/UX Design</a>
+                                <a href="#" data-value="Figma">Figma</a>
+                                <a href="#" data-value="Video Editing">Video Editing</a>
+                                <a href="#" data-value="Premiere Pro">Premiere Pro</a>
+                                <a href="#" data-value="Photography">Photography</a>
+                                <a href="#" data-value="Lightroom">Lightroom</a>
+                                <a href="#" data-value="JavaScript">JavaScript</a>
+                                <a href="#" data-value="TypeScript">TypeScript</a>
+                                <a href="#" data-value="Public Speaking">Public Speaking</a>
+                            </div>
+                        </div>
+                        <input type="text" id="profile-skills-offered" class="w-full p-3 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:border-teal-500 mt-2" placeholder="Add custom skills (comma separated)" />
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 mb-2">Skills You Want (select from list or add custom)</label>
+                        <div class="dropdown">
+                            <button class="dropdown-btn" type="button" id="skills-wanted-dropdown">Select Skills</button>
+                            <div class="dropdown-content" id="skills-wanted-options">
+                                <a href="#" data-value="Web Development">Web Development</a>
+                                <a href="#" data-value="React">React</a>
+                                <a href="#" data-value="Node.js">Node.js</a>
+                                <a href="#" data-value="Graphic Design">Graphic Design</a>
+                                <a href="#" data-value="Video Editing">Video Editing</a>
+                                <a href="#" data-value="Marketing">Marketing</a>
+                                <a href="#" data-value="Social Media">Social Media</a>
+                                <a href="#" data-value="Data Analysis">Data Analysis</a>
+                                <a href="#" data-value="Excel">Excel</a>
+                                <a href="#" data-value="UI/UX Design">UI/UX Design</a>
+                                <a href="#" data-value="Figma">Figma</a>
+                                <a href="#" data-value="Python">Python</a>
+                                <a href="#" data-value="JavaScript">JavaScript</a>
+                                <a href="#" data-value="Photography">Photography</a>
+                                <a href="#" data-value="Motion Graphics">Motion Graphics</a>
+                                <a href="#" data-value="Illustration">Illustration</a>
+                                <a href="#" data-value="Excel">Excel</a>
+                                <a href="#" data-value="Data Visualization">Data Visualization</a>
+                            </div>
+                        </div>
+                        <input type="text" id="profile-skills-wanted" class="w-full p-3 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:border-teal-500 mt-2" placeholder="Add custom skills (comma separated)" />
+                    </div>
+                    <div>
+                        <label class="block text-gray-400 mb-2">Availability</label>
+                        <div class="dropdown">
+                            <button class="dropdown-btn" type="button" id="availability-dropdown">Select Availability</button>
+                            <div class="dropdown-content" id="availability-options">
+                                <a href="#" data-value="Weekends">Weekends</a>
+                                <a href="#" data-value="Evenings">Evenings</a>
+                                <a href="#" data-value="Weekdays">Weekdays</a>
+                                <a href="#" data-value="Flexible">Flexible</a>
+                                <a href="#" data-value="Mornings">Mornings</a>
+                                <a href="#" data-value="Afternoons">Afternoons</a>
+                            </div>
+                            <input type="hidden" id="profile-availability">
+                        </div>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" id="profile-is-public" class="h-5 w-5 text-teal-500 bg-gray-700 border-gray-600 rounded focus:ring-teal-500" checked />
+                        <label for="profile-is-public" class="ml-3 text-gray-300">Make profile public</label>
+                    </div>
+                    <button type="submit" class="w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-3 px-4 rounded-md transition duration-300 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M7.707 10.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V6h5a2 2 0 012 2v7a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2h5v5.586l-1.293-1.293zM9 4a1 1 0 012 0v2H9V4z" />
+                        </svg>
+                        Save Profile
+                    </button>
                 </form>
             </div>
         </div>
 
         <!-- Dashboard Screen -->
-        <div id="dashboard-screen" class="screen">
-            <div id="recommendations-section" class="mb-12 hidden">
-                <h2 class="text-2xl font-bold text-teal-400 mb-4">Recommended For You</h2>
+        <div id="dashboard-screen" class="screen hidden">
+            <div id="recommendations-section" class="mb-12">
+                <h2 class="text-2xl font-bold text-teal-400 mb-4 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
+                    </svg>
+                    Recommended For You
+                </h2>
                 <div id="recommendations-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
             </div>
 
-            <h2 class="text-2xl font-bold text-teal-400 mb-4">Browse All Users</h2>
+            <h2 class="text-2xl font-bold text-teal-400 mb-4 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                Browse All Users
+            </h2>
             <div class="mb-8 flex flex-col md:flex-row gap-4 justify-center items-center">
                 <input type="text" id="search-input" placeholder="Search by name or skill..." class="w-full md:w-1/2 lg:w-1/3 p-3 bg-gray-800 rounded-full border border-gray-700 focus:outline-none focus:border-teal-500"/>
                 <select id="availability-filter" class="w-full md:w-auto p-3 bg-gray-800 rounded-full border border-gray-700 focus:outline-none focus:border-teal-500 text-white">
@@ -66,6 +297,9 @@
                     <option value="Weekends">Weekends</option>
                     <option value="Evenings">Evenings</option>
                     <option value="Weekdays">Weekdays</option>
+                    <option value="Flexible">Flexible</option>
+                    <option value="Mornings">Mornings</option>
+                    <option value="Afternoons">Afternoons</option>
                 </select>
             </div>
             <div id="users-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
@@ -76,7 +310,12 @@
         <div id="requests-screen" class="screen hidden">
             <div class="max-w-4xl mx-auto">
                 <div class="flex justify-between items-center mb-8">
-                    <h2 class="text-3xl font-bold text-teal-400">Swap Requests</h2>
+                    <h2 class="text-3xl font-bold text-teal-400 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                        </svg>
+                        Swap Requests
+                    </h2>
                     <select id="request-status-filter" class="p-2 bg-gray-800 rounded-md border border-gray-700 focus:outline-none focus:border-teal-500 text-white">
                         <option value="all">All</option>
                         <option value="pending">Pending</option>
@@ -87,11 +326,21 @@
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div>
-                        <h3 class="text-2xl font-semibold mb-4 border-b-2 border-gray-700 pb-2">Received</h3>
+                        <h3 class="text-2xl font-semibold mb-4 border-b-2 border-gray-700 pb-2 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                            </svg>
+                            Received
+                        </h3>
                         <div id="received-requests-container"></div>
                     </div>
                     <div>
-                        <h3 class="text-2xl font-semibold mb-4 border-b-2 border-gray-700 pb-2">Sent</h3>
+                        <h3 class="text-2xl font-semibold mb-4 border-b-2 border-gray-700 pb-2 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2 text-teal-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                            </svg>
+                            Sent
+                        </h3>
                         <div id="sent-requests-container"></div>
                     </div>
                 </div>
@@ -102,419 +351,680 @@
     <!-- Modals Container -->
     <div id="modals-container"></div>
 
-
     <!-- App Logic -->
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // --- Seed Data ---
-            const seedUsers = [
-                { id: 'seed_user_1', name: 'Alice Johnson', location: 'San Francisco, CA', photoURL: 'https://placehold.co/80x80/3498db/ffffff?text=A', skillsOffered: ['Graphic Design', 'Photoshop', 'Illustration'], skillsWanted: ['Web Development', 'React', 'Node.js'], availability: 'Evenings', isPublic: true, rating: 4.5, ratingCount: 10 },
-                { id: 'seed_user_2', name: 'Bob Williams', location: 'New York, NY', photoURL: 'https://placehold.co/80x80/e74c3c/ffffff?text=B', skillsOffered: ['Content Writing', 'SEO', 'Blogging'], skillsWanted: ['Graphic Design', 'Video Editing'], availability: 'Weekends', isPublic: true, rating: 4.8, ratingCount: 15 },
-                { id: 'seed_user_3', name: 'Charlie Brown', location: 'Chicago, IL', photoURL: 'https://placehold.co/80x80/2ecc71/ffffff?text=C', skillsOffered: ['React', 'Node.js', 'Firebase'], skillsWanted: ['Marketing', 'Social Media'], availability: 'Weekdays', isPublic: true, rating: 4.2, ratingCount: 8 },
-                ...Array.from({ length: 70 }, (_, i) => {
-                    const firstNames = ["Liam", "Olivia", "Noah", "Emma", "Oliver", "Ava", "Elijah", "Charlotte", "William", "Sophia", "James", "Amelia", "Benjamin", "Isabella", "Lucas", "Mia", "Henry", "Evelyn", "Alexander", "Harper"];
-                    const lastNames = ["Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez"];
-                    const locations = ["New York, NY", "Los Angeles, CA", "Chicago, IL", "Houston, TX", "Phoenix, AZ", "Philadelphia, PA", "San Antonio, TX", "San Diego, CA", "Dallas, TX", "San Jose, CA"];
-                    const skills = ["JavaScript", "Python", "Java", "C++", "C#", "HTML", "CSS", "React", "Angular", "Vue.js", "Node.js", "Express.js", "Django", "Flask", "Public Speaking", "Content Writing", "SEO", "Marketing", "Sales", "Project Management"];
-                    const availabilities = ["Weekends", "Evenings", "Weekdays", "Always"];
-                    const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
-                    return {
-                        id: `seed_user_${i + 4}`,
-                        name: `${firstName} ${lastNames[Math.floor(Math.random() * lastNames.length)]}`,
-                        location: locations[Math.floor(Math.random() * locations.length)],
-                        photoURL: `https://placehold.co/80x80/${Math.floor(Math.random()*16777215).toString(16)}/ffffff?text=${firstName.charAt(0)}`,
-                        skillsOffered: [...new Set([...Array(Math.floor(Math.random() * 3) + 2)].map(() => skills[Math.floor(Math.random() * skills.length)]))],
-                        skillsWanted: [...new Set([...Array(Math.floor(Math.random() * 3) + 2)].map(() => skills[Math.floor(Math.random() * skills.length)]))],
-                        availability: availabilities[Math.floor(Math.random() * availabilities.length)],
-                        isPublic: true,
-                        rating: (Math.random() * 4 + 1).toFixed(1),
-                        ratingCount: Math.floor(Math.random() * 50) + 1,
-                    }
-                })
-            ];
+        // --- Seed Data ---
+        const seedUsers = [
+            {
+                id: 'seed_user_1',
+                name: 'Alice Johnson',
+                location: 'San Francisco, CA',
+                photoURL: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&h=200&q=60',
+                skillsOffered: ['Graphic Design', 'Photoshop', 'Illustration'],
+                skillsWanted: ['Web Development', 'React', 'Node.js'],
+                availability: 'Evenings',
+                isPublic: true,
+                rating: 45,
+                ratingCount: 10,
+            },
+            {
+                id: 'seed_user_2',
+                name: 'Bob Williams',
+                location: 'New York, NY',
+                photoURL: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&h=200&q=60',
+                skillsOffered: ['Content Writing', 'SEO', 'Blogging'],
+                skillsWanted: ['Graphic Design', 'Video Editing'],
+                availability: 'Weekends',
+                isPublic: true,
+                rating: 72,
+                ratingCount: 15,
+            },
+            {
+                id: 'seed_user_3',
+                name: 'Charlie Brown',
+                location: 'Chicago, IL',
+                photoURL: 'https://images.unsplash.com/photo-1542178243-bc20204b769f?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&h=200&q=60',
+                skillsOffered: ['React', 'Node.js', 'Firebase'],
+                skillsWanted: ['Marketing', 'Social Media'],
+                availability: 'Weekdays',
+                isPublic: true,
+                rating: 34,
+                ratingCount: 8,
+            },
+            {
+                id: 'seed_user_4',
+                name: 'Diana Miller',
+                location: 'Austin, TX',
+                photoURL: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&h=200&q=60',
+                skillsOffered: ['Marketing', 'Social Media', 'Content Strategy'],
+                skillsWanted: ['Data Analysis', 'Excel'],
+                availability: 'Weekdays',
+                isPublic: true,
+                rating: 42,
+                ratingCount: 9,
+            },
+            {
+                id: 'seed_user_5',
+                name: 'Ethan Davis',
+                location: 'Seattle, WA',
+                photoURL: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&h=200&q=60',
+                skillsOffered: ['Python', 'Data Science', 'Machine Learning'],
+                skillsWanted: ['UI/UX Design', 'Figma'],
+                availability: 'Weekends',
+                isPublic: true,
+                rating: 38,
+                ratingCount: 7,
+            },
+            {
+                id: 'seed_user_6',
+                name: 'Fiona Clark',
+                location: 'Boston, MA',
+                photoURL: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&h=200&q=60',
+                skillsOffered: ['UI/UX Design', 'Figma', 'Adobe XD'],
+                skillsWanted: ['Python', 'JavaScript'],
+                availability: 'Evenings',
+                isPublic: true,
+                rating: 49,
+                ratingCount: 11,
+            },
+            {
+                id: 'seed_user_7',
+                name: 'George Wilson',
+                location: 'Denver, CO',
+                photoURL: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&h=200&q=60',
+                skillsOffered: ['Video Editing', 'Premiere Pro', 'After Effects'],
+                skillsWanted: ['Photography', 'Lightroom'],
+                availability: 'Weekends',
+                isPublic: true,
+                rating: 56,
+                ratingCount: 12,
+            },
+            {
+                id: 'seed_user_8',
+                name: 'Hannah Lee',
+                location: 'Portland, OR',
+                photoURL: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&h=200&q=60',
+                skillsOffered: ['Photography', 'Lightroom', 'Photoshop'],
+                skillsWanted: ['Video Editing', 'Motion Graphics'],
+                availability: 'Weekdays',
+                isPublic: true,
+                rating: 41,
+                ratingCount: 8,
+            },
+            {
+                id: 'seed_user_9',
+                name: 'Ian Thompson',
+                location: 'Miami, FL',
+                photoURL: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&h=200&q=60',
+                skillsOffered: ['JavaScript', 'TypeScript', 'Angular'],
+                skillsWanted: ['Graphic Design', 'Illustration'],
+                availability: 'Evenings',
+                isPublic: true,
+                rating: 47,
+                ratingCount: 10,
+            },
+            {
+                id: 'seed_user_10',
+                name: 'Jessica Adams',
+                location: 'Atlanta, GA',
+                photoURL: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&h=200&q=60',
+                skillsOffered: ['Public Speaking', 'Presentation Skills', 'Coaching'],
+                skillsWanted: ['Excel', 'Data Visualization'],
+                availability: 'Weekdays',
+                isPublic: true,
+                rating: 52,
+                ratingCount: 13,
+            }
+        ];
 
-            // --- App State ---
-            let currentUser = { uid: "test_user_id" };
-            let currentUserProfile = { id: 'test_user_id', name: 'Test User', location: 'Your Computer', photoURL: 'https://placehold.co/80x80/9b59b6/ffffff?text=T', skillsOffered: ['Testing', 'Debugging'], skillsWanted: ['React', 'Graphic Design'], availability: 'Always', isPublic: true, rating: 5, ratingCount: 1 };
-            let allUsers = seedUsers;
-            let allRequests = [
-                { id: "seed_user_1_test_user_id", requesterId: "seed_user_1", requesterName: "Alice Johnson", requesterPhoto: "https://placehold.co/80x80/3498db/ffffff?text=A", targetId: "test_user_id", targetName: "Test User", targetPhoto: "https://placehold.co/80x80/9b59b6/ffffff?text=T", offeredSkill: "Graphic Design", wantedSkill: "Testing", message: "Hey! I'd love to swap skills with you.", status: "pending", createdAt: new Date() }
-            ];
-            let currentPage = 1;
-            const usersPerPage = 6;
+        // --- App State ---
+        let currentUser = null;
+        let currentUserProfile = null;
+        let allUsers = [...seedUsers];
+        let allRequests = [
+            { 
+                id: "seed_user_1_test_user_id", 
+                requesterId: "seed_user_1", 
+                requesterName: "Alice Johnson", 
+                requesterPhoto: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&h=200&q=60", 
+                targetId: "test_user_id", 
+                targetName: "Test User", 
+                targetPhoto: "https://placehold.co/80x80/9b59b6/ffffff?text=T", 
+                offeredSkill: "Graphic Design", 
+                wantedSkill: "Testing", 
+                message: "Hey! I'd love to swap skills with you.", 
+                status: "pending", 
+                createdAt: new Date() 
+            },
+            { 
+                id: "seed_user_2_test_user_id", 
+                requesterId: "seed_user_2", 
+                requesterName: "Bob Williams", 
+                requesterPhoto: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&h=200&q=60", 
+                targetId: "test_user_id", 
+                targetName: "Test User", 
+                targetPhoto: "https://placehold.co/80x80/9b59b6/ffffff?text=T", 
+                offeredSkill: "Content Writing", 
+                wantedSkill: "Testing", 
+                message: "I can help with your content needs!", 
+                status: "pending", 
+                createdAt: new Date(Date.now() - 86400000) 
+            },
+            { 
+                id: "test_user_id_seed_user_3", 
+                requesterId: "test_user_id", 
+                requesterName: "Test User", 
+                requesterPhoto: "https://placehold.co/80x80/9b59b6/ffffff?text=T", 
+                targetId: "seed_user_3", 
+                targetName: "Charlie Brown", 
+                targetPhoto: "https://images.unsplash.com/photo-1542178243-bc20204b769f?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&h=200&q=60", 
+                offeredSkill: "Testing", 
+                wantedSkill: "React", 
+                message: "Would love to learn React from you!", 
+                status: "accepted", 
+                createdAt: new Date(Date.now() - 172800000) 
+            }
+        ];
+        let currentPage = 1;
+        const usersPerPage = 6;
 
-            // --- DOM Elements ---
-            const screens = document.querySelectorAll('.screen');
-            const navLinks = document.getElementById('nav-links');
-            const navBrand = document.getElementById('nav-brand');
-            const profileForm = document.getElementById('profile-form');
-            const usersContainer = document.getElementById('users-container');
-            const searchInput = document.getElementById('search-input');
-            const availabilityFilter = document.getElementById('availability-filter');
-            const paginationContainer = document.getElementById('pagination-container');
-            const recommendationsSection = document.getElementById('recommendations-section');
-            const recommendationsContainer = document.getElementById('recommendations-container');
-            const receivedRequestsContainer = document.getElementById('received-requests-container');
-            const sentRequestsContainer = document.getElementById('sent-requests-container');
-            const requestStatusFilter = document.getElementById('request-status-filter');
+        // Local storage for users
+        const localUsers = JSON.parse(localStorage.getItem('skillswap-users')) || [];
+        if (localUsers.length === 0) {
+            localStorage.setItem('skillswap-users', JSON.stringify([...seedUsers]));
+        }
 
-            // --- Navigation & UI Updates ---
-            const navigateTo = (screenName) => {
-                screens.forEach(s => s.classList.add('hidden'));
-                document.getElementById(`${screenName}-screen`).classList.remove('hidden');
-            };
+        // Local storage for authentication
+        const registeredUsers = JSON.parse(localStorage.getItem('skillswap-auth')) || [];
 
-            const updateNav = () => {
-                navLinks.innerHTML = `
-                    <button data-screen="dashboard" class="nav-btn px-4 py-2 rounded-md text-white hover:bg-gray-700 transition">Dashboard</button>
-                    <button data-screen="requests" class="nav-btn px-4 py-2 rounded-md text-white hover:bg-gray-700 transition">My Swaps</button>
-                    <button data-screen="profile" class="nav-btn px-4 py-2 rounded-md text-white hover:bg-gray-700 transition">Profile</button>
-                `;
-            };
+        // --- DOM Elements ---
+        const screens = document.querySelectorAll('.screen');
+        const navLinks = document.getElementById('nav-links');
+        const navBrand = document.getElementById('nav-brand');
+        
+        // Auth
+        const authScreen = document.getElementById('auth-screen');
+        const authForm = document.getElementById('auth-form');
+        const authError = document.getElementById('auth-error');
+        const authTitle = document.getElementById('auth-title');
+        const authButton = document.getElementById('auth-button');
+        const authToggleText = document.getElementById('auth-toggle-text');
+        const authToggleButton = document.getElementById('auth-toggle-button');
+        let isLogin = true;
 
-            const showNotification = (message, type = 'success') => {
-                const bgColor = type === 'success' ? 'bg-green-500' : 'bg-red-500';
-                const notification = document.createElement('div');
-                notification.className = `fixed top-20 right-5 ${bgColor} text-white px-6 py-3 rounded-lg shadow-lg animate-fade-in-out z-50`;
-                notification.textContent = message;
-                document.getElementById('notification-area').appendChild(notification);
-                setTimeout(() => notification.remove(), 3000);
-            };
+        // Profile
+        const profileForm = document.getElementById('profile-form');
+        const profilePhotoPreview = document.getElementById('profile-photo-preview');
+        const profilePhotoUpload = document.getElementById('profile-photo-upload');
+        const profilePhotoUrl = document.getElementById('profile-photo-url');
+        
+        // Dashboard
+        const usersContainer = document.getElementById('users-container');
+        const searchInput = document.getElementById('search-input');
+        const availabilityFilter = document.getElementById('availability-filter');
+        const paginationContainer = document.getElementById('pagination-container');
+        const recommendationsSection = document.getElementById('recommendations-section');
+        const recommendationsContainer = document.getElementById('recommendations-container');
+        
+        // Requests
+        const receivedRequestsContainer = document.getElementById('received-requests-container');
+        const sentRequestsContainer = document.getElementById('sent-requests-container');
+        const requestStatusFilter = document.getElementById('request-status-filter');
+
+        // --- Navigation ---
+        const navigateTo = (screenName) => {
+            screens.forEach(s => s.classList.add('hidden'));
+            document.getElementById(${screenName}-screen).classList.remove('hidden');
             
-            // --- Rendering Functions ---
-            const renderDashboard = () => {
-                if (!currentUserProfile) return;
-                const search = searchInput.value.toLowerCase();
-                const availability = availabilityFilter.value.toLowerCase();
-
-                const recommended = currentUserProfile.skillsWanted ? allUsers.filter(u => 
-                    u.skillsOffered && u.skillsOffered.some(offered => currentUserProfile.skillsWanted.map(s => s.toLowerCase()).includes(offered.toLowerCase()))
-                ) : [];
-
-                const nonRecommended = allUsers.filter(u => !recommended.find(rec => rec.id === u.id));
-
-                const filtered = nonRecommended.filter(user => {
-                    const matchesSearch = (user.name?.toLowerCase().includes(search)) ||
-                                        (user.skillsOffered?.some(skill => skill.toLowerCase().includes(search)));
-                    const matchesAvailability = availability ? (user.availability?.toLowerCase().includes(availability)) : true;
-                    return matchesSearch && matchesAvailability;
-                });
-
-                if(recommended.length > 0) {
-                    recommendationsSection.classList.remove('hidden');
-                    recommendationsContainer.innerHTML = recommended.map(createUserCard).join('');
-                } else {
-                    recommendationsSection.classList.add('hidden');
-                }
-
-                const indexOfLastUser = currentPage * usersPerPage;
-                const indexOfFirstUser = indexOfLastUser - usersPerPage;
-                const currentUsers = filtered.slice(indexOfFirstUser, indexOfLastUser);
-                
-                usersContainer.innerHTML = currentUsers.map(createUserCard).join('');
-                renderPagination(filtered.length);
-            };
-
-            const createUserCard = (user) => {
-                const rating = user.ratingCount > 0 ? (user.rating / user.ratingCount).toFixed(1) : 'No ratings';
-                return `
-                    <div class="bg-gray-800 rounded-lg shadow-lg p-6 flex flex-col h-full transform hover:scale-105 transition-transform duration-300">
-                        <div class="flex items-center mb-4">
-                            <img src="${user.photoURL || `https://placehold.co/80x80/1a202c/718096?text=${user.name.charAt(0)}`}" alt="${user.name}" class="w-20 h-20 rounded-full mr-4 border-2 border-teal-400" />
-                            <div>
-                                <h3 class="text-xl font-bold">${user.name}</h3>
-                                <p class="text-gray-400">${user.location || ''}</p>
-                                <p class="text-yellow-400">⭐ ${rating} (${user.ratingCount || 0})</p>
-                            </div>
-                        </div>
-                        <div class="flex-grow">
-                            <h4 class="font-semibold text-teal-400 mt-4 mb-2">Offers:</h4>
-                            <div class="flex flex-wrap gap-2">${user.skillsOffered?.map(skill => `<span class="bg-gray-700 text-teal-300 px-3 py-1 rounded-full text-sm">${skill}</span>`).join('')}</div>
-                            <h4 class="font-semibold text-teal-400 mt-4 mb-2">Wants:</h4>
-                            <div class="flex flex-wrap gap-2">${user.skillsWanted?.map(skill => `<span class="bg-gray-700 text-gray-300 px-3 py-1 rounded-full text-sm">${skill}</span>`).join('')}</div>
-                            ${user.availability ? `<h4 class="font-semibold text-teal-400 mt-4 mb-2">Availability:</h4><p class="text-gray-400">${user.availability}</p>` : ''}
-                        </div>
-                        <button data-user-id="${user.id}" class="request-swap-btn mt-6 w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded-md transition">Request Swap</button>
-                    </div>
-                `;
-            };
-
-            const renderPagination = (totalUsers) => {
-                const totalPages = Math.ceil(totalUsers / usersPerPage);
-                if (totalPages <= 1) {
-                    paginationContainer.innerHTML = '';
-                    return;
-                }
-                let pageNumbers = '';
-                for (let i = 1; i <= totalPages; i++) {
-                    pageNumbers += `<li><button data-page="${i}" class="page-btn px-4 py-2 rounded-md transition ${currentPage === i ? 'bg-teal-500 text-white' : 'bg-gray-800 hover:bg-gray-700'}">${i}</button></li>`;
-                }
-
-                paginationContainer.innerHTML = `
-                    <ul class="flex justify-center items-center space-x-2">
-                        <li><button id="prev-page" class="px-4 py-2 rounded-md transition ${currentPage === 1 ? 'bg-gray-700 text-gray-500 cursor-not-allowed' : 'bg-gray-800 hover:bg-gray-700'}" ${currentPage === 1 ? 'disabled' : ''}>&lt;</button></li>
-                        ${pageNumbers}
-                        <li><button id="next-page" class="px-4 py-2 rounded-md transition ${currentPage === totalPages ? 'bg-gray-700 text-gray-500 cursor-not-allowed' : 'bg-gray-800 hover:bg-gray-700'}" ${currentPage === totalPages ? 'disabled' : ''}>&gt;</button></li>
-                    </ul>
-                `;
-            };
-
-            const renderSwapRequests = () => {
-                const statusFilter = requestStatusFilter.value;
-                const filtered = allRequests.filter(r => statusFilter === 'all' || r.status === statusFilter);
-                
-                const received = filtered.filter(r => r.targetId === currentUser.uid);
-                const sent = filtered.filter(r => r.requesterId === currentUser.uid);
-
-                receivedRequestsContainer.innerHTML = received.length > 0 ? received.map(r => createRequestCard(r, 'received')).join('') : `<p class="text-gray-400">No requests received.</p>`;
-                sentRequestsContainer.innerHTML = sent.length > 0 ? sent.map(r => createRequestCard(r, 'sent')).join('') : `<p class="text-gray-400">No requests sent.</p>`;
-            };
-
-            const createRequestCard = (request, type) => {
-                const displayName = type === 'received' ? request.requesterName : request.targetName;
-                const displayPhoto = type === 'received' ? request.requesterPhoto : request.targetPhoto;
-                const statusColors = {
-                    pending: 'bg-yellow-500/20 text-yellow-300',
-                    accepted: 'bg-green-500/20 text-green-300',
-                    rejected: 'bg-red-500/20 text-red-300',
-                    completed: 'bg-blue-500/20 text-blue-300'
-                };
-
-                let buttons = '';
-                if (type === 'received' && request.status === 'pending') {
-                    buttons = `<button data-id="${request.id}" class="accept-btn bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm">Accept</button>
-                                <button data-id="${request.id}" class="reject-btn bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm">Reject</button>`;
-                } else if (type === 'received' && request.status === 'accepted') {
-                    buttons = `<button data-id="${request.id}" class="complete-btn bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md text-sm">Complete Swap</button>`;
-                } else if (type === 'sent' && request.status === 'pending') {
-                    buttons = `<button data-id="${request.id}" class="delete-btn bg-gray-600 hover:bg-gray-500 text-white px-3 py-1 rounded-md text-sm">Delete</button>`;
-                }
-
-                return `
-                    <div class="bg-gray-800 p-4 rounded-lg mb-4 shadow-md space-y-3">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center">
-                                <img src="${displayPhoto || `https://placehold.co/40x40/1a202c/718096?text=${displayName.charAt(0)}`}" alt="${displayName}" class="w-10 h-10 rounded-full mr-3" />
-                                <p class="font-semibold">${displayName}</p>
-                            </div>
-                            <span class="px-3 py-1 text-sm rounded-full ${statusColors[request.status]}">${request.status}</span>
-                        </div>
-                        <div>
-                            <p class="text-sm text-gray-400">You Offer: <span class="font-semibold text-teal-300">${type === 'received' ? request.wantedSkill : request.offeredSkill}</span></p>
-                            <p class="text-sm text-gray-400">You Get: <span class="font-semibold text-teal-300">${type === 'received' ? request.offeredSkill : request.wantedSkill}</span></p>
-                        </div>
-                        ${request.message ? `<p class="text-sm bg-gray-700 p-2 rounded-md">"${request.message}"</p>` : ''}
-                        <div class="mt-4 flex justify-end space-x-2">${buttons}</div>
-                    </div>
-                `;
-            };
-
-            const renderProfileForm = () => {
-                if (currentUserProfile) {
-                    document.getElementById('profile-name').value = currentUserProfile.name || '';
-                    document.getElementById('profile-location').value = currentUserProfile.location || '';
-                    document.getElementById('profile-photo').value = currentUserProfile.photoURL || '';
-                    document.getElementById('profile-skills-offered').value = currentUserProfile.skillsOffered?.join(', ') || '';
-                    document.getElementById('profile-skills-wanted').value = currentUserProfile.skillsWanted?.join(', ') || '';
-                    document.getElementById('profile-availability').value = currentUserProfile.availability || '';
-                    document.getElementById('profile-is-public').checked = currentUserProfile.isPublic !== undefined ? currentUserProfile.isPublic : true;
-                }
-            };
-
-            // --- Modals ---
-            const openRequestModal = (targetUser) => {
-                const offeredOptions = currentUserProfile.skillsOffered?.map(s => `<option value="${s}">${s}</option>`).join('');
-                const wantedOptions = targetUser.skillsOffered?.map(s => `<option value="${s}">${s}</option>`).join('');
-
-                const modalHTML = `
-                    <div id="request-swap-modal" class="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
-                        <div class="bg-gray-800 rounded-lg shadow-xl p-8 w-full max-w-lg relative">
-                            <button id="close-request-modal" class="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl">&times;</button>
-                            <h2 class="text-2xl font-bold text-teal-400 mb-4">New Swap Request</h2>
-                            <p class="mb-6 text-gray-300">Propose a swap with <span class="font-bold">${targetUser.name}</span>.</p>
-                            <form id="request-swap-form" data-target-id="${targetUser.id}" class="space-y-6">
-                                <div>
-                                    <label class="block text-gray-400 mb-2">Choose one of your offered skills:</label>
-                                    <select id="request-offered-skill" class="w-full p-3 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:border-teal-500" required>${offeredOptions}</select>
-                                </div>
-                                <div>
-                                    <label class="block text-gray-400 mb-2">Choose one of their offered skills:</label>
-                                    <select id="request-wanted-skill" class="w-full p-3 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:border-teal-500" required>${wantedOptions}</select>
-                                </div>
-                                <div>
-                                    <label class="block text-gray-400 mb-2">Message (optional):</label>
-                                    <textarea id="request-message" rows="4" class="w-full p-3 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:border-teal-500"></textarea>
-                                </div>
-                                <div class="flex justify-end space-x-4">
-                                    <button type="button" id="cancel-request-btn" class="px-6 py-2 rounded-md text-white bg-gray-600 hover:bg-gray-500 transition">Cancel</button>
-                                    <button type="submit" class="px-6 py-2 rounded-md text-white bg-teal-500 hover:bg-teal-600 transition">Submit Request</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                `;
-                document.getElementById('modals-container').innerHTML = modalHTML;
-            };
-
-            const openRatingModal = (request) => {
-                const userToRateName = request.requesterId === currentUser.uid ? request.targetName : request.requesterName;
-                const modalHTML = `
-                    <div id="rating-modal" class="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50">
-                        <div class="bg-gray-800 rounded-lg shadow-xl p-8 w-full max-w-md">
-                            <h3 class="text-2xl font-bold text-teal-400 mb-4">Complete Swap & Rate</h3>
-                            <p class="text-gray-300 mb-6">How was your experience with ${userToRateName}?</p>
-                            <form id="rating-form" data-request-id="${request.id}">
-                                <div class="flex justify-center items-center space-x-2 mb-8" id="rating-stars">
-                                    ${[1, 2, 3, 4, 5].map(star => `<svg data-rating="${star}" class="rating-star w-10 h-10 cursor-pointer ${5 >= star ? 'text-yellow-400' : 'text-gray-600'}" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>`).join('')}
-                                </div>
-                                <input type="hidden" id="rating-value" value="5" />
-                                <div class="flex justify-end space-x-4">
-                                    <button type="button" id="cancel-rating-btn" class="px-6 py-2 rounded-md text-white bg-gray-600 hover:bg-gray-500 transition">Cancel</button>
-                                    <button type="submit" class="px-6 py-2 rounded-md text-white bg-teal-500 hover:bg-teal-600 transition">Submit</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                `;
-                document.getElementById('modals-container').innerHTML = modalHTML;
-            };
-
-            const closeModal = () => {
-                document.getElementById('modals-container').innerHTML = '';
-            };
-
-            // --- Event Handlers & Logic ---
-            const handleProfileSubmit = (e) => {
-                e.preventDefault();
-                showNotification("Profile saved (demo only)!");
-                navigateTo('dashboard');
-            };
-
-            const handleRequestSwapSubmit = (e) => {
-                e.preventDefault();
-                const targetId = e.target.dataset.targetId;
-                const targetUser = allUsers.find(u => u.id === targetId);
-                const newRequest = {
-                    id: [currentUser.uid, targetUser.id].sort().join('_'),
-                    requesterId: currentUser.uid,
-                    requesterName: currentUserProfile.name,
-                    requesterPhoto: currentUserProfile.photoURL,
-                    targetId: targetUser.id,
-                    targetName: targetUser.name,
-                    targetPhoto: targetUser.photoURL,
-                    offeredSkill: document.getElementById('request-offered-skill').value,
-                    wantedSkill: document.getElementById('request-wanted-skill').value,
-                    message: document.getElementById('request-message').value,
-                    status: 'pending',
-                    createdAt: new Date(),
-                };
-                
-                // Add to local state and re-render
-                allRequests.unshift(newRequest);
-                renderSwapRequests();
-
-                showNotification("Swap request sent!");
-                closeModal();
-            };
-            
-            const handleRatingSubmit = (e) => {
-                e.preventDefault();
-                showNotification("Rating submitted (demo only)!");
-                closeModal();
-            };
-
-            const handleRequestAction = (requestId, status) => {
-                const request = allRequests.find(r => r.id === requestId);
-                if (request) {
-                    request.status = status;
-                    renderSwapRequests();
-                }
-                showNotification(`Request ${status}.`);
-            };
-            
-            const handleDeleteRequest = (requestId) => {
-                allRequests = allRequests.filter(r => r.id !== requestId);
-                renderSwapRequests();
-                showNotification("Request deleted.");
-            };
-            
-            // --- Event Listeners Setup ---
-            profileForm.addEventListener('submit', handleProfileSubmit);
-            navBrand.addEventListener('click', () => navigateTo('dashboard'));
-            navLinks.addEventListener('click', (e) => {
-                if (e.target.matches('.nav-btn')) {
-                    navigateTo(e.target.dataset.screen);
-                }
-            });
-
-            searchInput.addEventListener('input', renderDashboard);
-            availabilityFilter.addEventListener('change', renderDashboard);
-            requestStatusFilter.addEventListener('change', renderSwapRequests);
-
-            paginationContainer.addEventListener('click', e => {
-                if (e.target.matches('.page-btn')) {
-                    currentPage = parseInt(e.target.dataset.page);
-                    renderDashboard();
-                } else if (e.target.matches('#prev-page')) {
-                    if (currentPage > 1) {
-                        currentPage--;
-                        renderDashboard();
-                    }
-                } else if (e.target.matches('#next-page')) {
-                    const totalPages = Math.ceil(allUsers.filter(u => u.name.toLowerCase().includes(searchInput.value.toLowerCase())).length / usersPerPage);
-                    if (currentPage < totalPages) {
-                        currentPage++;
-                        renderDashboard();
-                    }
-                }
-            });
-
-            document.body.addEventListener('click', e => {
-                if (e.target.matches('.request-swap-btn')) {
-                    const userId = e.target.dataset.userId;
-                    const userToRequest = allUsers.find(u => u.id === userId);
-                    if (userToRequest) openRequestModal(userToRequest);
-                }
-                if (e.target.matches('#close-request-modal') || e.target.matches('#cancel-request-btn')) {
-                    closeModal();
-                }
-                if (e.target.matches('#close-rating-modal') || e.target.matches('#cancel-rating-btn')) {
-                    closeModal();
-                }
-                if (e.target.closest('#request-swap-form')) {
-                    if(e.target.closest('form').id === 'request-swap-form') e.target.closest('form').addEventListener('submit', handleRequestSwapSubmit);
-                }
-                if (e.target.closest('#rating-form')) {
-                    if(e.target.closest('form').id === 'rating-form') e.target.closest('form').addEventListener('submit', handleRatingSubmit);
-                }
-                if(e.target.matches('.rating-star')){
-                    const rating = parseInt(e.target.dataset.rating);
-                    document.getElementById('rating-value').value = rating;
-                    document.querySelectorAll('.rating-star').forEach(star => {
-                        star.classList.toggle('text-yellow-400', parseInt(star.dataset.rating) <= rating);
-                        star.classList.toggle('text-gray-600', parseInt(star.dataset.rating) > rating);
-                    });
-                }
-                if(e.target.matches('.accept-btn')) handleRequestAction(e.target.dataset.id, 'accepted');
-                if(e.target.matches('.reject-btn')) handleRequestAction(e.target.dataset.id, 'rejected');
-                if(e.target.matches('.delete-btn')) handleDeleteRequest(e.target.dataset.id);
-                if(e.target.matches('.complete-btn')) {
-                    const request = allRequests.find(r => r.id === e.target.dataset.id);
-                    if(request) openRatingModal(request);
-                }
-            });
-
-            // --- Initial Load ---
-            function initializeAppLogic() {
-                updateNav();
+            // Refresh the screen when navigating to it
+            if (screenName === 'dashboard') {
                 renderDashboard();
+            } else if (screenName === 'requests') {
                 renderSwapRequests();
+            } else if (screenName === 'profile') {
                 renderProfileForm();
             }
+        };
 
-            initializeAppLogic();
-        });
-    </script>
+        const updateNav = () => {
+            if (currentUser) {
+                navLinks.innerHTML = `
+                    <button data-screen="dashboard" class="nav-btn px-4 py-2 rounded-md text-white hover:bg-gray-700 transition flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                        </svg>
+                        Dashboard
+                    </button>
+                    <button data-screen="requests" class="nav-btn px-4 py-2 rounded-md text-white hover:bg-gray-700 transition flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                        </svg>
+                        My Swaps
+                    </button>
+                    <button data-screen="profile" class="nav-btn px-4 py-2 rounded-md text-white hover:bg-gray-700 transition flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                        </svg>
+                        Profile
+                    </button>
+                    <button id="logout-btn" class="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-md transition flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                        </svg>
+                        Logout
+                    </button>
+                `;
+            } else {
+                navLinks.innerHTML = `
+                    <button data-screen="auth" class="nav-btn bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded-md transition flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd" />
+                        </svg>
+                        Login / Sign Up
+                    </button>
+                `;
+            }
+        };
+        
+        // --- Rendering ---
+        const renderDashboard = () => {
+            const search = searchInput.value.toLowerCase();
+            const availability = availabilityFilter.value.toLowerCase();
 
-</body>
-</html>
+            // Get recommended users based on skills wanted
+            const recommended = currentUserProfile?.skillsWanted ? allUsers.filter(u => 
+                u.id !== currentUser?.id && 
+                u.isPublic &&
+                u.skillsOffered && 
+                u.skillsOffered.some(offered => 
+                    currentUserProfile.skillsWanted.map(s => s.toLowerCase()).includes(offered.toLowerCase())
+                )
+            ) : [];
+
+            // Get all other public users (excluding current user and recommended users)
+            const nonRecommended = allUsers.filter(u => 
+                u.id !== currentUser?.id && 
+                u.isPublic &&
+                !recommended.find(rec => rec.id === u.id)
+            );
+
+            // Filter based on search and availability
+            const filtered = nonRecommended.filter(user => {
+                const matchesSearch = (user.name?.toLowerCase().includes(search)) ||
+                                      (user.skillsOffered?.some(skill => skill.toLowerCase().includes(search)));
+                const matchesAvailability = availability ? (user.availability?.toLowerCase().includes(availability)) : true;
+                return matchesSearch && matchesAvailability;
+            });
+
+            // Recommendations
+            if(recommended.length > 0) {
+                recommendationsSection.classList.remove('hidden');
+                recommendationsContainer.innerHTML = recommended.map(createUserCard).join('');
+            } else {
+                recommendationsSection.classList.add('hidden');
+            }
+
+            // All Users
+            const indexOfLastUser = currentPage * usersPerPage;
+            const indexOfFirstUser = indexOfLastUser - usersPerPage;
+            const currentUsers = filtered.slice(indexOfFirstUser, indexOfLastUser);
+            
+            usersContainer.innerHTML = currentUsers.map(createUserCard).join('');
+            renderPagination(filtered.length);
+        };
+
+        const createUserCard = (user) => {
+            const rating = user.ratingCount > 0 ? (user.rating / user.ratingCount).toFixed(1) : 'No ratings';
+            return `
+                <div class="user-card bg-gray-800 rounded-lg shadow-lg p-6 flex flex-col h-full hover:shadow-teal-500/20">
+                    <div class="flex items-center mb-4">
+                        <img src="${user.photoURL || https://placehold.co/80x80/1a202c/718096?text=${user.name.charAt(0)}}" 
+                             alt="${user.name}" 
+                             class="w-20 h-20 rounded-full mr-4 border-2 border-teal-400 object-cover" />
+                        <div>
+                            <h3 class="text-xl font-bold">${user.name}</h3>
+                            <p class="text-gray-400">${user.location || ''}</p>
+                            <p class="text-yellow-400 flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                                </svg>
+                                ${rating} (${user.ratingCount || 0})
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex-grow">
+                        <h4 class="font-semibold text-teal-400 mt-4 mb-2 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Offers:
+                        </h4>
+                        <div class="flex flex-wrap gap-2">${user.skillsOffered?.map(skill => 
+                            <span class="skill-badge bg-gray-700 text-teal-300 px-3 py-1 rounded-full text-sm">${skill}</span>
+                        ).join('')}</div>
+                        
+                        <h4 class="font-semibold text-teal-400 mt-4 mb-2 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                            </svg>
+                            Wants:
+                        </h4>
+                        <div class="flex flex-wrap gap-2">${user.skillsWanted?.map(skill => 
+                            <span class="skill-badge bg-gray-700 text-gray-300 px-3 py-1 rounded-full text-sm">${skill}</span>
+                        ).join('')}</div>
+                        
+                        ${user.availability ? `
+                        <h4 class="font-semibold text-teal-400 mt-4 mb-2 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                            Availability:
+                        </h4>
+                        <p class="text-gray-400">${user.availability}</p>` : ''}
+                    </div>
+                    <button data-user-id="${user.id}" class="request-swap-btn mt-6 w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-2 px-4 rounded-md transition flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                        </svg>
+                        Request Swap
+                    </button>
+                </div>
+            `;
+        };
+
+        const renderPagination = (totalUsers) => {
+            const totalPages = Math.ceil(totalUsers / usersPerPage);
+            if (totalPages <= 1) {
+                paginationContainer.innerHTML = '';
+                return;
+            }
+            let pageNumbers = '';
+            for (let i = 1; i <= totalPages; i++) {
+                pageNumbers += <li><button data-page="${i}" class="page-btn px-4 py-2 rounded-md transition ${currentPage === i ? 'bg-teal-500 text-white' : 'bg-gray-800 hover:bg-gray-700'}">${i}</button></li>;
+            }
+
+            paginationContainer.innerHTML = `
+                <ul class="flex justify-center items-center space-x-2">
+                    <li><button id="prev-page" class="px-4 py-2 rounded-md transition ${currentPage === 1 ? 'bg-gray-700 text-gray-500 cursor-not-allowed' : 'bg-gray-800 hover:bg-gray-700'}" ${currentPage === 1 ? 'disabled' : ''}>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                    </button></li>
+                    ${pageNumbers}
+                    <li><button id="next-page" class="px-4 py-2 rounded-md transition ${currentPage === totalPages ? 'bg-gray-700 text-gray-500 cursor-not-allowed' : 'bg-gray-800 hover:bg-gray-700'}" ${currentPage === totalPages ? 'disabled' : ''}>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+                        </svg>
+                    </button></li>
+                </ul>
+            `;
+        };
+
+        const renderSwapRequests = () => {
+            const statusFilter = requestStatusFilter.value;
+            const filtered = allRequests.filter(r => 
+                (statusFilter === 'all' || r.status === statusFilter) &&
+                (r.requesterId === currentUser.id || r.targetId === currentUser.id)
+            );
+            
+            const received = filtered.filter(r => r.targetId === currentUser.id);
+            const sent = filtered.filter(r => r.requesterId === currentUser.id);
+
+            receivedRequestsContainer.innerHTML = received.length > 0 ? 
+                received.map(r => createRequestCard(r, 'received')).join('') : 
+                `<div class="bg-gray-800 p-8 rounded-lg text-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <p class="text-gray-400">No requests received yet.</p>
+                </div>`;
+                
+            sentRequestsContainer.innerHTML = sent.length > 0 ? 
+                sent.map(r => createRequestCard(r, 'sent')).join('') : 
+                `<div class="bg-gray-800 p-8 rounded-lg text-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                    <p class="text-gray-400">No requests sent yet.</p>
+                </div>`;
+        };
+
+        const createRequestCard = (request, type) => {
+            const displayName = type === 'received' ? request.requesterName : request.targetName;
+            const displayPhoto = type === 'received' ? request.requesterPhoto : request.targetPhoto;
+            const statusColors = {
+                pending: 'bg-yellow-500/20 text-yellow-300',
+                accepted: 'bg-green-500/20 text-green-300',
+                rejected: 'bg-red-500/20 text-red-300',
+                completed: 'bg-blue-500/20 text-blue-300'
+            };
+
+            const statusIcons = {
+                pending: `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>`,
+                accepted: `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>`,
+                rejected: `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>`,
+                completed: `<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>`
+            };
+
+            let buttons = '';
+            if (type === 'received' && request.status === 'pending') {
+                buttons = `
+                    <button data-id="${request.id}" class="accept-btn bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-md text-sm flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        Accept
+                    </button>
+                    <button data-id="${request.id}" class="reject-btn bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md text-sm flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                        Reject
+                    </button>
+                `;
+            } else if (type === 'received' && request.status === 'accepted') {
+                buttons = `
+                    <button data-id="${request.id}" class="complete-btn bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md text-sm flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                        Complete Swap
+                    </button>
+                `;
+            } else if (type === 'sent' && request.status === 'pending') {
+                buttons = `
+                    <button data-id="${request.id}" class="delete-btn bg-gray-600 hover:bg-gray-500 text-white px-3 py-1 rounded-md text-sm flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                        Delete
+                    </button>
+                `;
+            }
+
+            return `
+                <div class="bg-gray-800 p-4 rounded-lg mb-4 shadow-md space-y-3 border-l-4 ${statusColors[request.status].replace('bg', 'border')}">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <img src="${displayPhoto || https://placehold.co/40x40/1a202c/718096?text=${displayName.charAt(0)}}" 
+                                 alt="${displayName}" 
+                                 class="w-10 h-10 rounded-full mr-3 object-cover" />
+                            <p class="font-semibold">${displayName}</p>
+                        </div>
+                        <span class="px-3 py-1 text-sm rounded-full ${statusColors[request.status]} flex items-center">
+                            ${statusIcons[request.status]}
+                            ${request.status.charAt(0).toUpperCase() + request.status.slice(1)}
+                        </span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="bg-gray-700/50 p-2 rounded">
+                            <p class="text-xs text-gray-400">You Offer:</p>
+                            <p class="font-semibold text-teal-300">${type === 'received' ? request.wantedSkill : request.offeredSkill}</p>
+                        </div>
+                        <div class="bg-gray-700/50 p-2 rounded">
+                            <p class="text-xs text-gray-400">You Get:</p>
+                            <p class="font-semibold text-teal-300">${type === 'received' ? request.offeredSkill : request.wantedSkill}</p>
+                        </div>
+                    </div>
+                    ${request.message ? `
+                    <div class="bg-gray-700 p-3 rounded-md relative">
+                        <div class="absolute -top-2 left-4 w-0 h-0 border-l-4 border-r-4 border-b-4 border-l-transparent border-r-transparent border-b-gray-700"></div>
+                        <p class="text-sm">"${request.message}"</p>
+                    </div>` : ''}
+                    <div class="text-xs text-gray-500 mt-1">
+                        ${new Date(request.createdAt).toLocaleString()}
+                    </div>
+                    ${buttons ? <div class="mt-4 flex justify-end space-x-2">${buttons}</div> : ''}
+                </div>
+            `;
+        };
+
+        const renderProfileForm = () => {
+            if (currentUserProfile) {
+                document.getElementById('profile-name').value = currentUserProfile.name || '';
+                
+                // Set location dropdown
+                const locationDropdown = document.getElementById('location-dropdown');
+                if (currentUserProfile.location) {
+                    locationDropdown.textContent = currentUserProfile.location;
+                    document.getElementById('profile-location').value = currentUserProfile.location;
+                }
+                
+                profilePhotoPreview.src = currentUserProfile.photoURL || https://placehold.co/120x120/1a202c/718096?text=${currentUserProfile.name.charAt(0)};
+                profilePhotoUrl.value = currentUserProfile.photoURL || '';
+                document.getElementById('profile-skills-offered').value = currentUserProfile.skillsOffered?.join(', ') || '';
+                document.getElementById('profile-skills-wanted').value = currentUserProfile.skillsWanted?.join(', ') || '';
+                
+                // Set availability dropdown
+                const availabilityDropdown = document.getElementById('availability-dropdown');
+                if (currentUserProfile.availability) {
+                    availabilityDropdown.textContent = currentUserProfile.availability;
+                    document.getElementById('profile-availability').value = currentUserProfile.availability;
+                }
+                
+                document.getElementById('profile-is-public').checked = currentUserProfile.isPublic !== undefined ? currentUserProfile.isPublic : true;
+            }
+        };
+
+        // --- Modals ---
+        const openRequestModal = (targetUser) => {
+            const offeredOptions = currentUserProfile.skillsOffered?.map(s => <option value="${s}">${s}</option>).join('');
+            const wantedOptions = targetUser.skillsOffered?.map(s => <option value="${s}">${s}</option>).join('');
+
+            const modalHTML = `
+                <div id="request-swap-modal" class="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50 p-4">
+                    <div class="bg-gray-800 rounded-lg shadow-xl p-8 w-full max-w-lg relative max-h-screen overflow-y-auto">
+                        <button id="close-request-modal" class="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl">&times;</button>
+                        <div class="flex items-center mb-6">
+                            <img src="${targetUser.photoURL || https://placehold.co/60x60/1a202c/718096?text=${targetUser.name.charAt(0)}}" 
+                                 alt="${targetUser.name}" 
+                                 class="w-12 h-12 rounded-full mr-4 border-2 border-teal-400 object-cover">
+                            <div>
+                                <h2 class="text-2xl font-bold text-teal-400">New Swap Request</h2>
+                                <p class="text-gray-300">Propose a swap with <span class="font-bold">${targetUser.name}</span></p>
+                            </div>
+                        </div>
+                        <form id="request-swap-form" data-target-id="${targetUser.id}" class="space-y-6">
+                            <div>
+                                <label class="block text-gray-400 mb-2 flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    Choose one of your offered skills:
+                                </label>
+                                <select id="request-offered-skill" class="w-full p-3 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:border-teal-500" required>
+                                    ${offeredOptions}
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-gray-400 mb-2 flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                    </svg>
+                                    Choose one of their offered skills:
+                                </label>
+                                <select id="request-wanted-skill" class="w-full p-3 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:border-teal-500" required>
+                                    ${wantedOptions}
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-gray-400 mb-2 flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                                    </svg>
+                                    Message (optional):
+                                </label>
+                                <textarea id="request-message" rows="4" class="w-full p-3 bg-gray-700 rounded-md border border-gray-600 focus:outline-none focus:border-teal-500" placeholder="Write a message to introduce yourself and explain the swap..."></textarea>
+                            </div>
+                            <div class="flex justify-end space-x-4">
+                                <button type="button" id="cancel-request-btn" class="px-6 py-2 rounded-md text-white bg-gray-600 hover:bg-gray-500 transition flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                    Cancel
+                                </button>
+                                <button type="submit" class="px-6 py-2 rounded-md text-white bg-teal-500 hover:bg-teal-600 transition flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                                    </svg>
+                                    Send Request
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
+            document.getElementById('modals-container').innerHTML = modalHTML;
+        };
+
+        const openRatingModal = (request) => {
+            const userToRateName = request.requesterId === currentUser.id ? request.targetName : request.requesterName;
+            const userToRatePhoto = request.requesterId === currentUser.id ? request.targetPhoto : request.requesterPhoto;
+            
+            const modalHTML = `
+                <div id="rating-modal" class="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50 p-4">
+                    <div class="bg-gray-800 rounded-lg shadow-xl p-8 w-full max-w-md">
+                        <div class="flex items-center mb-6">
+                            <img src="${userToRatePhoto || https://placehold.co/60x60/1a202c/718096?text=${userToRateName.charAt(0)}}" 
+                                 alt="${userToRateName}" 
+                                 class="w-12 h-12 rounded-full mr-4 border-2 border-teal-400 object-cover">
+                            <div>
+                                <h3 class="text-2xl font-bold text-teal-400">Complete Swap & Rate</h3>
+                                <p class="text-gray-300">How was your experience with <span class="font-bold">${userToRateName}</span>?</p>
+                            </div>
+                        </div>
+                        <form id="rating-form" data-request-id="${request.id}">
+                            <div class="flex justify-center items-center space-x-2 mb-8" id="rating-stars">
+                                ${[1, 2, 3, 4, 5].map(star => `
+                                    <svg data-rating="${star}" class="rating-star w-10 h-10 cursor-pointer ${5 >= star ? 'text-yellow-400' : 'text-gray-600'}" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path>
+                                    </svg>
+                                `).join('')}
+                            </div>
+                            <input type="hidden" id="rating-value" value="5" />
+                            <div class="flex justify-end space-x-4">
+                                <button type="button" id="cancel-rating-btn" class="px-6 py-2 rounded-md text-white bg-gray-600 hover:bg-gray-500 transition flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                    Cancel
+                                </button>
+                                <button type="submit" class="px-6 py-2 rounded-md text-white bg-teal-500 hover:bg-teal-600 transition flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    Submit
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            `;
