@@ -1,6 +1,7 @@
-# Odoo_hackthon_PS3
+# Odoo_hackthon_PS1
+Problem Statement 1:-
 
-ReWear – Community Clothing Exchange 
+Skill Swap Platform 
 
 #Details of the Members:-
 Pranav Rai(pranavraigzp@gmail.com)
