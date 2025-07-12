@@ -574,7 +574,7 @@
         // --- Navigation ---
         const navigateTo = (screenName) => {
             screens.forEach(s => s.classList.add('hidden'));
-            document.getElementById(${screenName}-screen).classList.remove('hidden');
+            document.getElementById(`${screenName}-screen`).classList.remove('hidden');
             
             // Refresh the screen when navigating to it
             if (screenName === 'dashboard') {
@@ -678,7 +678,7 @@
             return `
                 <div class="user-card bg-gray-800 rounded-lg shadow-lg p-6 flex flex-col h-full hover:shadow-teal-500/20">
                     <div class="flex items-center mb-4">
-                        <img src="${user.photoURL || https://placehold.co/80x80/1a202c/718096?text=${user.name.charAt(0)}}" 
+                        <img src="${user.photoURL || `https://placehold.co/80x80/1a202c/718096?text=${user.name.charAt(0)}`}" 
                              alt="${user.name}" 
                              class="w-20 h-20 rounded-full mr-4 border-2 border-teal-400 object-cover" />
                         <div>
@@ -700,7 +700,7 @@
                             Offers:
                         </h4>
                         <div class="flex flex-wrap gap-2">${user.skillsOffered?.map(skill => 
-                            <span class="skill-badge bg-gray-700 text-teal-300 px-3 py-1 rounded-full text-sm">${skill}</span>
+                            `<span class="skill-badge bg-gray-700 text-teal-300 px-3 py-1 rounded-full text-sm">${skill}</span>`
                         ).join('')}</div>
                         
                         <h4 class="font-semibold text-teal-400 mt-4 mb-2 flex items-center">
@@ -710,7 +710,7 @@
                             Wants:
                         </h4>
                         <div class="flex flex-wrap gap-2">${user.skillsWanted?.map(skill => 
-                            <span class="skill-badge bg-gray-700 text-gray-300 px-3 py-1 rounded-full text-sm">${skill}</span>
+                            `<span class="skill-badge bg-gray-700 text-gray-300 px-3 py-1 rounded-full text-sm">${skill}</span>`
                         ).join('')}</div>
                         
                         ${user.availability ? `
@@ -740,7 +740,7 @@
             }
             let pageNumbers = '';
             for (let i = 1; i <= totalPages; i++) {
-                pageNumbers += <li><button data-page="${i}" class="page-btn px-4 py-2 rounded-md transition ${currentPage === i ? 'bg-teal-500 text-white' : 'bg-gray-800 hover:bg-gray-700'}">${i}</button></li>;
+                pageNumbers += `<li><button data-page="${i}" class="page-btn px-4 py-2 rounded-md transition ${currentPage === i ? 'bg-teal-500 text-white' : 'bg-gray-800 hover:bg-gray-700'}">${i}</button></li>`;
             }
 
             paginationContainer.innerHTML = `
@@ -854,7 +854,7 @@
                 <div class="bg-gray-800 p-4 rounded-lg mb-4 shadow-md space-y-3 border-l-4 ${statusColors[request.status].replace('bg', 'border')}">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center">
-                            <img src="${displayPhoto || https://placehold.co/40x40/1a202c/718096?text=${displayName.charAt(0)}}" 
+                            <img src="${displayPhoto || `https://placehold.co/40x40/1a202c/718096?text=${displayName.charAt(0)}`}" 
                                  alt="${displayName}" 
                                  class="w-10 h-10 rounded-full mr-3 object-cover" />
                             <p class="font-semibold">${displayName}</p>
@@ -882,7 +882,7 @@
                     <div class="text-xs text-gray-500 mt-1">
                         ${new Date(request.createdAt).toLocaleString()}
                     </div>
-                    ${buttons ? <div class="mt-4 flex justify-end space-x-2">${buttons}</div> : ''}
+                    ${buttons ? `<div class="mt-4 flex justify-end space-x-2">${buttons}</div>` : ''}
                 </div>
             `;
         };
@@ -898,7 +898,7 @@
                     document.getElementById('profile-location').value = currentUserProfile.location;
                 }
                 
-                profilePhotoPreview.src = currentUserProfile.photoURL || https://placehold.co/120x120/1a202c/718096?text=${currentUserProfile.name.charAt(0)};
+                profilePhotoPreview.src = currentUserProfile.photoURL || `https://placehold.co/120x120/1a202c/718096?text=${currentUserProfile.name.charAt(0)}`;
                 profilePhotoUrl.value = currentUserProfile.photoURL || '';
                 document.getElementById('profile-skills-offered').value = currentUserProfile.skillsOffered?.join(', ') || '';
                 document.getElementById('profile-skills-wanted').value = currentUserProfile.skillsWanted?.join(', ') || '';
@@ -916,15 +916,15 @@
 
         // --- Modals ---
         const openRequestModal = (targetUser) => {
-            const offeredOptions = currentUserProfile.skillsOffered?.map(s => <option value="${s}">${s}</option>).join('');
-            const wantedOptions = targetUser.skillsOffered?.map(s => <option value="${s}">${s}</option>).join('');
+            const offeredOptions = currentUserProfile.skillsOffered?.map(s => `<option value="${s}">${s}</option>`).join('');
+            const wantedOptions = targetUser.skillsOffered?.map(s => `<option value="${s}">${s}</option>`).join('');
 
             const modalHTML = `
                 <div id="request-swap-modal" class="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50 p-4">
                     <div class="bg-gray-800 rounded-lg shadow-xl p-8 w-full max-w-lg relative max-h-screen overflow-y-auto">
                         <button id="close-request-modal" class="absolute top-4 right-4 text-gray-400 hover:text-white text-2xl">&times;</button>
                         <div class="flex items-center mb-6">
-                            <img src="${targetUser.photoURL || https://placehold.co/60x60/1a202c/718096?text=${targetUser.name.charAt(0)}}" 
+                            <img src="${targetUser.photoURL || `https://placehold.co/60x60/1a202c/718096?text=${targetUser.name.charAt(0)}`}" 
                                  alt="${targetUser.name}" 
                                  class="w-12 h-12 rounded-full mr-4 border-2 border-teal-400 object-cover">
                             <div>
@@ -993,7 +993,7 @@
                 <div id="rating-modal" class="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50 p-4">
                     <div class="bg-gray-800 rounded-lg shadow-xl p-8 w-full max-w-md">
                         <div class="flex items-center mb-6">
-                            <img src="${userToRatePhoto || https://placehold.co/60x60/1a202c/718096?text=${userToRateName.charAt(0)}}" 
+                            <img src="${userToRatePhoto || `https://placehold.co/60x60/1a202c/718096?text=${userToRateName.charAt(0)}`}" 
                                  alt="${userToRateName}" 
                                  class="w-12 h-12 rounded-full mr-4 border-2 border-teal-400 object-cover">
                             <div>
@@ -1028,3 +1028,463 @@
                     </div>
                 </div>
             `;
+            document.getElementById('modals-container').innerHTML = modalHTML;
+        };
+
+        const closeModal = () => {
+            document.getElementById('modals-container').innerHTML = '';
+        };
+
+        const showNotification = (message, type = 'success') => {
+            const bgColor = type === 'success' ? 'bg-green-500' : 'bg-red-500';
+            const icon = type === 'success' ? 
+                `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>` :
+                `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>`;
+                
+            const notification = document.createElement('div');
+            notification.className = `fixed top-20 right-5 ${bgColor} text-white px-6 py-3 rounded-lg shadow-lg animate-fade-in-out z-50 flex items-center`;
+            notification.innerHTML = `${icon}${message}`;
+            document.getElementById('notification-area').appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        };
+
+        // --- Event Handlers ---
+        const handleLogout = async () => {
+            currentUser = null;
+            currentUserProfile = null;
+            sessionStorage.removeItem('currentUser');
+            navigateTo('auth');
+            showNotification("Logged out successfully");
+        };
+
+        const handleAuthSubmit = async (e) => {
+            e.preventDefault();
+            authError.classList.add('hidden');
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                const users = JSON.parse(localStorage.getItem('skillswap-auth')) || [];
+                
+                if (isLogin) {
+                    // Login logic
+                    const user = users.find(u => u.email === email && u.password === password);
+                    if (!user) {
+                        throw new Error("Invalid email or password");
+                    }
+                    
+                    // Find user profile
+                    const allUsers = JSON.parse(localStorage.getItem('skillswap-users')) || [];
+                    const userProfile = allUsers.find(u => u.id === user.id) || {
+                        id: user.id,
+                        name: email.split('@')[0],
+                        skillsOffered: [],
+                        skillsWanted: [],
+                        isPublic: true
+                    };
+                    
+                    currentUser = { id: user.id, email };
+                    currentUserProfile = userProfile;
+                    sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    
+                    showNotification("Login successful!");
+                    navigateTo('profile'); // Changed to profile first
+                } else {
+                    // Signup logic
+                    if (users.some(u => u.email === email)) {
+                        throw new Error("Email already registered");
+                    }
+                    
+                    const newUser = {
+                        id: 'user_' + Math.random().toString(36).substr(2, 9),
+                        email,
+                        password
+                    };
+                    
+                    users.push(newUser);
+                    localStorage.setItem('skillswap-auth', JSON.stringify(users));
+                    
+                    // Create default profile
+                    const allUsers = JSON.parse(localStorage.getItem('skillswap-users')) || [];
+                    const newProfile = {
+                        id: newUser.id,
+                        name: email.split('@')[0],
+                        skillsOffered: [],
+                        skillsWanted: [],
+                        isPublic: true
+                    };
+                    allUsers.push(newProfile);
+                    localStorage.setItem('skillswap-users', JSON.stringify(allUsers));
+                    
+                    currentUser = { id: newUser.id, email };
+                    currentUserProfile = newProfile;
+                    sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+                    
+                    showNotification("Account created successfully!");
+                    navigateTo('profile'); // Go to profile first
+                }
+            } catch (err) {
+                authError.textContent = err.message;
+                authError.classList.remove('hidden');
+            }
+        };
+
+        const handlePhotoUpload = (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    profilePhotoPreview.src = event.target.result;
+                    profilePhotoUrl.value = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        };
+
+        const handleProfileSubmit = async (e) => {
+            e.preventDefault();
+            if (!currentUser) return;
+            
+            const profileData = {
+                name: document.getElementById('profile-name').value,
+                location: document.getElementById('profile-location').value || document.getElementById('location-dropdown').textContent,
+                photoURL: profilePhotoUrl.value,
+                skillsOffered: document.getElementById('profile-skills-offered').value.split(',').map(s => s.trim()).filter(Boolean),
+                skillsWanted: document.getElementById('profile-skills-wanted').value.split(',').map(s => s.trim()).filter(Boolean),
+                availability: document.getElementById('profile-availability').value || document.getElementById('availability-dropdown').textContent,
+                isPublic: document.getElementById('profile-is-public').checked,
+            };
+            
+            try {
+                // Update current user profile
+                currentUserProfile = { ...currentUserProfile, ...profileData };
+                
+                // Update in local storage
+                const allUsers = JSON.parse(localStorage.getItem('skillswap-users')) || [];
+                const userIndex = allUsers.findIndex(u => u.id === currentUser.id);
+                if (userIndex !== -1) {
+                    allUsers[userIndex] = currentUserProfile;
+                    localStorage.setItem('skillswap-users', JSON.stringify(allUsers));
+                } else {
+                    allUsers.push(currentUserProfile);
+                    localStorage.setItem('skillswap-users', JSON.stringify(allUsers));
+                }
+                
+                showNotification("Profile updated successfully!");
+                navigateTo('dashboard');
+            } catch (error) {
+                console.error("Error updating profile: ", error);
+                showNotification("Failed to update profile.", "error");
+            }
+        };
+
+        const handleRequestSwapSubmit = async (e) => {
+            e.preventDefault();
+            const targetId = e.target.dataset.targetId;
+            const targetUser = allUsers.find(u => u.id === targetId);
+            const requestDetails = {
+                targetUser,
+                offeredSkill: document.getElementById('request-offered-skill').value,
+                wantedSkill: document.getElementById('request-wanted-skill').value,
+                message: document.getElementById('request-message').value,
+            };
+            
+            const requestId = [currentUser.id, targetUser.id].sort().join('_');
+            const requests = JSON.parse(localStorage.getItem('skillswap-requests')) || [];
+            
+            if(requests.some(r => r.id === requestId && r.status !== 'rejected')) {
+                showNotification("An active swap request between you and this user already exists.", "error");
+                return;
+            }
+
+            const requestData = {
+                id: requestId,
+                requesterId: currentUser.id,
+                requesterName: currentUserProfile.name,
+                requesterPhoto: currentUserProfile.photoURL,
+                targetId: targetUser.id,
+                targetName: targetUser.name,
+                targetPhoto: targetUser.photoURL,
+                offeredSkill: requestDetails.offeredSkill,
+                wantedSkill: requestDetails.wantedSkill,
+                message: requestDetails.message,
+                status: 'pending',
+                createdAt: new Date().toISOString(),
+            };
+
+            try {
+                requests.push(requestData);
+                localStorage.setItem('skillswap-requests', JSON.stringify(requests));
+                allRequests = requests;
+                
+                showNotification(`Swap request sent to ${targetUser.name}!`);
+                closeModal();
+                renderSwapRequests();
+            } catch (error) {
+                console.error("Error sending swap request: ", error);
+                showNotification("Failed to send swap request.", "error");
+            }
+        };
+        
+        const handleRatingSubmit = async (e) => {
+            e.preventDefault();
+            const requestId = e.target.dataset.requestId;
+            const request = allRequests.find(r => r.id === requestId);
+            const ratingValue = parseInt(document.getElementById('rating-value').value);
+            
+            const userToRateId = request.requesterId === currentUser.id ? request.targetId : request.requesterId;
+            
+            try {
+                // Update user rating
+                const allUsers = JSON.parse(localStorage.getItem('skillswap-users')) || [];
+                const userIndex = allUsers.findIndex(u => u.id === userToRateId);
+                if (userIndex !== -1) {
+                    const user = allUsers[userIndex];
+                    const newRating = (user.rating || 0) + ratingValue;
+                    const newRatingCount = (user.ratingCount || 0) + 1;
+                    
+                    allUsers[userIndex] = {
+                        ...user,
+                        rating: newRating,
+                        ratingCount: newRatingCount
+                    };
+                    localStorage.setItem('skillswap-users', JSON.stringify(allUsers));
+                }
+                
+                // Update request status
+                const requests = JSON.parse(localStorage.getItem('skillswap-requests')) || [];
+                const requestIndex = requests.findIndex(r => r.id === requestId);
+                if (requestIndex !== -1) {
+                    requests[requestIndex].status = 'completed';
+                    localStorage.setItem('skillswap-requests', JSON.stringify(requests));
+                    allRequests = requests;
+                }
+                
+                showNotification("Rating submitted and swap completed!");
+                closeModal();
+                renderSwapRequests();
+            } catch(error) {
+                 console.error("Error completing swap: ", error);
+                 showNotification("Failed to complete swap.", "error");
+            }
+        };
+
+        const handleRequestAction = async (requestId, status) => {
+            try {
+                const requests = JSON.parse(localStorage.getItem('skillswap-requests')) || [];
+                const requestIndex = requests.findIndex(r => r.id === requestId);
+                if (requestIndex !== -1) {
+                    requests[requestIndex].status = status;
+                    localStorage.setItem('skillswap-requests', JSON.stringify(requests));
+                    allRequests = requests;
+                    showNotification(`Request ${status}.`);
+                    renderSwapRequests();
+                }
+            } catch (error) {
+                console.error("Error updating request: ", error);
+                showNotification("Failed to update request.", "error");
+            }
+        };
+        
+        const handleDeleteRequest = async (requestId) => {
+            try {
+                const requests = JSON.parse(localStorage.getItem('skillswap-requests')) || [];
+                const updatedRequests = requests.filter(r => r.id !== requestId);
+                localStorage.setItem('skillswap-requests', JSON.stringify(updatedRequests));
+                allRequests = updatedRequests;
+                showNotification("Request deleted.");
+                renderSwapRequests();
+            } catch (error) {
+                console.error("Error deleting request: ", error);
+                showNotification("Failed to delete request.", "error");
+            }
+        };
+
+        // --- Initialize Dropdowns ---
+        const initializeDropdowns = () => {
+            // Location dropdown
+            const locationOptions = document.getElementById('location-options');
+            if (locationOptions) {
+                locationOptions.querySelectorAll('a').forEach(option => {
+                    option.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        document.getElementById('location-dropdown').textContent = option.textContent;
+                        document.getElementById('profile-location').value = option.dataset.value;
+                    });
+                });
+            }
+
+            // Skills offered dropdown
+            const skillsOfferedOptions = document.getElementById('skills-offered-options');
+            if (skillsOfferedOptions) {
+                skillsOfferedOptions.querySelectorAll('a').forEach(option => {
+                    option.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const skillsInput = document.getElementById('profile-skills-offered');
+                        const currentSkills = skillsInput.value.split(',').map(s => s.trim()).filter(Boolean);
+                        if (!currentSkills.includes(option.dataset.value)) {
+                            if (skillsInput.value) {
+                                skillsInput.value += `, ${option.dataset.value}`;
+                            } else {
+                                skillsInput.value = option.dataset.value;
+                            }
+                        }
+                    });
+                });
+            }
+
+            // Skills wanted dropdown
+            const skillsWantedOptions = document.getElementById('skills-wanted-options');
+            if (skillsWantedOptions) {
+                skillsWantedOptions.querySelectorAll('a').forEach(option => {
+                    option.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const skillsInput = document.getElementById('profile-skills-wanted');
+                        const currentSkills = skillsInput.value.split(',').map(s => s.trim()).filter(Boolean);
+                        if (!currentSkills.includes(option.dataset.value)) {
+                            if (skillsInput.value) {
+                                skillsInput.value += `, ${option.dataset.value}`;
+                            } else {
+                                skillsInput.value = option.dataset.value;
+                            }
+                        }
+                    });
+                });
+            }
+
+            // Availability dropdown
+            const availabilityOptions = document.getElementById('availability-options');
+            if (availabilityOptions) {
+                availabilityOptions.querySelectorAll('a').forEach(option => {
+                    option.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        document.getElementById('availability-dropdown').textContent = option.textContent;
+                        document.getElementById('profile-availability').value = option.dataset.value;
+                    });
+                });
+            }
+        };
+
+        // --- Event Listeners Setup ---
+        authForm.addEventListener('submit', handleAuthSubmit);
+        profileForm.addEventListener('submit', handleProfileSubmit);
+        profilePhotoUpload.addEventListener('change', handlePhotoUpload);
+
+        authToggleButton.addEventListener('click', () => {
+            isLogin = !isLogin;
+            authTitle.textContent = isLogin ? 'Login' : 'Sign Up';
+            authButton.textContent = isLogin ? 'Login' : 'Sign Up';
+            authToggleText.textContent = isLogin ? "Don't have an account?" : "Already have an account?";
+            authToggleButton.textContent = isLogin ? 'Sign Up' : 'Login';
+            authError.classList.add('hidden');
+        });
+
+        navBrand.addEventListener('click', () => navigateTo(currentUser ? 'dashboard' : 'auth'));
+        navLinks.addEventListener('click', (e) => {
+            if (e.target.matches('.nav-btn')) {
+                navigateTo(e.target.dataset.screen);
+            }
+            if (e.target.matches('#logout-btn')) {
+                handleLogout();
+            }
+        });
+
+        searchInput.addEventListener('input', renderDashboard);
+        availabilityFilter.addEventListener('change', renderDashboard);
+        requestStatusFilter.addEventListener('change', renderSwapRequests);
+
+        paginationContainer.addEventListener('click', e => {
+            if (e.target.matches('.page-btn')) {
+                currentPage = parseInt(e.target.dataset.page);
+                renderDashboard();
+            } else if (e.target.matches('#prev-page')) {
+                if (currentPage > 1) {
+                    currentPage--;
+                    renderDashboard();
+                }
+            } else if (e.target.matches('#next-page')) {
+                const totalPages = Math.ceil(allUsers.filter(u => 
+                    u.name.toLowerCase().includes(searchInput.value.toLowerCase()) && 
+                    u.id !== currentUser?.id
+                ).length / usersPerPage);
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    renderDashboard();
+                }
+            }
+        });
+
+        document.body.addEventListener('click', e => {
+            if (e.target.matches('.request-swap-btn')) {
+                const userId = e.target.dataset.userId;
+                const userToRequest = allUsers.find(u => u.id === userId);
+                if (userToRequest) openRequestModal(userToRequest);
+            }
+            if (e.target.matches('#close-request-modal') || e.target.matches('#cancel-request-btn')) {
+                closeModal();
+            }
+            if (e.target.matches('#close-rating-modal') || e.target.matches('#cancel-rating-btn')) {
+                closeModal();
+            }
+            if (e.target.closest('#request-swap-form')) {
+                if(e.target.closest('form').id === 'request-swap-form') e.target.closest('form').addEventListener('submit', handleRequestSwapSubmit);
+            }
+            if (e.target.closest('#rating-form')) {
+                 if(e.target.closest('form').id === 'rating-form') e.target.closest('form').addEventListener('submit', handleRatingSubmit);
+            }
+            if(e.target.matches('.rating-star')){
+                const rating = parseInt(e.target.dataset.rating);
+                document.getElementById('rating-value').value = rating;
+                document.querySelectorAll('.rating-star').forEach(star => {
+                    star.classList.toggle('text-yellow-400', parseInt(star.dataset.rating) <= rating);
+                    star.classList.toggle('text-gray-600', parseInt(star.dataset.rating) > rating);
+                });
+            }
+            if(e.target.matches('.accept-btn')) handleRequestAction(e.target.dataset.id, 'accepted');
+            if(e.target.matches('.reject-btn')) handleRequestAction(e.target.dataset.id, 'rejected');
+            if(e.target.matches('.delete-btn')) handleDeleteRequest(e.target.dataset.id);
+            if(e.target.matches('.complete-btn')) {
+                const request = allRequests.find(r => r.id === e.target.dataset.id);
+                if(request) openRatingModal(request);
+            }
+        });
+
+        // --- Initial Load ---
+        const initializeApp = () => {
+            // Load data from local storage
+            allUsers = JSON.parse(localStorage.getItem('skillswap-users')) || [...seedUsers];
+            allRequests = JSON.parse(localStorage.getItem('skillswap-requests')) || [];
+            
+            // Check if user is already logged in (from session)
+            const sessionUser = JSON.parse(sessionStorage.getItem('currentUser'));
+            if (sessionUser) {
+                currentUser = sessionUser;
+                const allUsers = JSON.parse(localStorage.getItem('skillswap-users')) || [];
+                currentUserProfile = allUsers.find(u => u.id === currentUser.id) || {
+                    id: currentUser.id,
+                    name: currentUser.email.split('@')[0],
+                    skillsOffered: [],
+                    skillsWanted: [],
+                    isPublic: true
+                };
+                navigateTo('profile'); // Changed to profile first
+            } else {
+                navigateTo('auth');
+            }
+            
+            renderDashboard();
+            renderSwapRequests();
+            renderProfileForm();
+            updateNav();
+            initializeDropdowns();
+        };
+
+        // Start the app
+        initializeApp();
+    </script>
+</body>
+</html>
